@@ -42,9 +42,9 @@ class ChatConsumer(WebsocketConsumer):
         self.room_group_name = "chat_%s" % self.room_name
         # Join room group
         self.channel_layer.group_add(self.room_group_name, self.channel_name)
-        chat_room = ChatConsumer.get_chat_room(self.room_name)
+        # chat_room = ChatConsumer.get_chat_room(self.room_name)
         await self.accept()
-        self.send_previous_messages(chat_room.messages)
+        # self.send_previous_messages(chat_room.messages)
 
     async def disconnect(self, close_code):
         self.channel_layer.group_discard(self.room_group_name, self.channel_name)

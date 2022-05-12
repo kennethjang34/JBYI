@@ -10,9 +10,14 @@ class WebSocketServer {
         }
         return WebSocketServer.serverInstance;
     }
-    constructor(previousMessageHandelr, newMessageHandler) {
-        this.previousMessagesHandelr = previousMessageHandelr;
-        this.newMessageHandler = newMessageHandler;
+    setMessageHandlers(chatID, previousMessageHandelr, newMessageHandler) {
+        try {
+            this.sockets[chatID].previousMessagesHandler =
+                previousMessageHandelr;
+            this.sockets[chatID].newMessageHandler = newMessageHandler;
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 
     connect = (chatID = null) => {
@@ -24,11 +29,13 @@ class WebSocketServer {
             // url = `ws://127.0.0.1:8000/ws/chat/${chatID}/`;
             console.log(`Connection try. URL: ${url}`);
             socketInstance = new WebSocket(url);
-            // if (this.sockets.indexOf(socketInstance)) {
-            //     this.sockets.append(socketInstance);
-            // }
+            socketInstance.chatID = chatID;
             if (!this.sockets[chatID]) {
-                this.sockets[chatID] = socketInstance;
+                this.sockets[chatID] = {
+                    socket: socketInstance,
+                    previousMessagesHandler: undefined,
+                    newMessageHandler: undefined,
+                };
             }
             socketInstance.onOpen = () => {
                 console.log(
@@ -37,7 +44,7 @@ class WebSocketServer {
             };
 
             socketInstance.onClose = () => {
-                if (this.sockets.indexOf(socketInstance)) {
+                if (this.sockets[socketInstance.chatID]) {
                     console.log(
                         `WebSocket connection to: ${url} closed. reconnecting...`
                     );
@@ -59,9 +66,18 @@ class WebSocketServer {
         }
     };
 
+    isConnectionMade = (chatID) => {
+        webSocket = this.sockets[chatID].socket;
+        if (webSocket && webSocket.readyState) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     deleteSocket = (chatID) => {
         try {
-            webSocket = this.sockets[chatID];
+            webSocket = this.sockets[chatID].socket;
             delete this.sockets.chatID;
             // this.sockets.splice(this.sockets.indexOf(webSocket), 1);
             webSocket.close();
@@ -72,7 +88,7 @@ class WebSocketServer {
 
     sendMessage = (chatID, data) => {
         try {
-            webSocket = this.sockets[chatID];
+            webSocket = this.sockets[chatID].socket;
             webSocket.send(JSON.stringify({ ...data }));
         } catch (error) {
             console.log(error.message);

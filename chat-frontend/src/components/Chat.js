@@ -1,5 +1,5 @@
 import React from "react";
-import WebSocketInstance from "../websocket";
+import WebSocketServer from "../websocket";
 import { useLocation } from "react-router-dom";
 import { connect } from "react-redux";
 import * as actions from "../store/actions/auth";
@@ -9,14 +9,31 @@ import * as actions from "../store/actions/auth";
 //ChatID is an instance-specific prop
 //
 class Chat extends React.Component {
-    constructor(props) {}
+    buildConnection = (chatID) => {
+        WebSocketServer.connect(chatID);
+        setTimeout(() => {
+            if (WebSocketServer.isConectionMade(chatID)) {
+                console.log(`Connectionto chat: ${chatID} successfully made`);
+                WebSocketServer.setMessageHandlers(
+                    chatID,
+                    this.props.loadMessages,
+                    this.props.addMessage
+                );
+                WebSocketServer.sendMessage(chatID, {
+                    request: "previous_messages",
+                });
+            }
+        }, 200);
+    };
+    constructor(props) {
+        super(props);
+        this.state.path = window.location.pathname;
+        let chatID = this.state.path.split("/chat/").pop();
+        buildConnection(chatID);
+    }
 
     componentDidMount() {
         this.setState({
-            //current chats retrieved.
-            //Not all messages of the chat will be stored in this.state.messages,
-            //Every time user requests more previous message, retrieve it from the backend
-            messages: [],
             //input: text input from the user for a message
             input: "",
         });
@@ -46,8 +63,22 @@ class Chat extends React.Component {
 }
 
 //Adding redux state as props to this component
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
     return {
-        currentUser: state.auth.username,
+        currentUser: state.auth.currentUser.username,
+        //messages need to be retreieved dynamically for each rendering
+        // unlike chatID. Redux suits
+        // messages: state.message.messages,
+        messages: state.chats[ownProps.chatID].messages,
     };
 };
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addMessage: (message) =>
+            dispatch(actions.messageActions.addMessage(message)),
+        loadMessages: (messages) =>
+            dispatch(actions.messageActions.loadMessages(messages)),
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);

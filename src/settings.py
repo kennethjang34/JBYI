@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "channels",
-    "chat",
+    "src.chat",
+    "rest_framework",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
+    "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [
@@ -51,7 +55,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "communication.urls"
+ROOT_URLCONF = "src.urls"
 
 TEMPLATES = [
     {
@@ -69,7 +73,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "communication.wsgi.application"
+WSGI_APPLICATION = "src.wsgi.application"
+ASGI_APPLICATION = "src.asgi.application"
 
 
 # Database
@@ -123,3 +128,15 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ),
+}

@@ -48,7 +48,7 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name, {"type": "chat_message_arrive", "message": message}
         )
 
-    # c
+    #
     # new message arrives at the server. called once only for each new message
     async def receive(self, text_data):
         data = json.loads(text_data)

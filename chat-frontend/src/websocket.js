@@ -5,7 +5,7 @@ class WebSocketServer {
 
     sockets = {};
     static getServerInstance() {
-        if (!serverInstance) {
+        if (!WebSocketServer.serverInstance) {
             WebSocketServer.serverInstance = new WebSocketServer();
         }
         return WebSocketServer.serverInstance;

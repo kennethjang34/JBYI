@@ -1,8 +1,7 @@
 import React from "react";
 import WebSocketServer from "../websocket";
-import { useLocation } from "react-router-dom";
 import { connect } from "react-redux";
-import * as actions from "../store/actions/auth";
+import * as actions from "../redux-store/actions/authActions";
 
 //The user authentication must be global. => redux
 //Chat component is react-based chat UI for each chat room. ChatID doesn't have to be global.
@@ -59,7 +58,133 @@ class Chat extends React.Component {
         return trimmed;
     }
 
-    render() {}
+    TopPanel(props) {
+        return (
+            <div class="action-header clearfix">
+                <div class="visible-xs" id="ms-menu-trigger">
+                    <i class="fa fa-bars"></i>
+                </div>
+
+                <div class="pull-left hidden-xs">
+                    <img
+                        src="https://bootdey.com/img/Content/avatar/avatar2.png"
+                        alt=""
+                        class="img-avatar m-r-10"
+                    />
+                    <div class="lv-avatar pull-left"></div>
+                    <span>David Parbell</span>
+                </div>
+
+                <ul class="ah-actions actions">
+                    <li>
+                        <a href="">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                            <i class="fa fa-check"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                            <i class="fa fa-clock-o"></i>
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="" data-toggle="dropdown" aria-expanded="true">
+                            <i class="fa fa-sort"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a href="">Latest</a>
+                            </li>
+                            <li>
+                                <a href="">Oldest</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="" data-toggle="dropdown" aria-expanded="true">
+                            <i class="fa fa-bars"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a href="">Refresh</a>
+                            </li>
+                            <li>
+                                <a href="">Message Settings</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <script>
+                    {document.addEventListener("DOMContentLoaded", () => {
+                        if (document.getElementById("ms-menu-trigger")[0]) {
+                            $("body").on(
+                                "click",
+                                "#ms-menu-trigger",
+                                function () {
+                                    document
+                                        .getElementByClassName("ms-menu")
+                                        .classList.toggle("toggled");
+                                }
+                            );
+                        }
+                    })}
+                    ;
+                </script>
+            </div>
+        );
+    }
+
+    render() {
+        return (
+            <div class="ms-body">
+                <this.TopPanel />
+                <div class="message-feed right">
+                    <div class="pull-right">
+                        <img
+                            src="https://bootdey.com/img/Content/avatar/avatar2.png"
+                            alt=""
+                            class="img-avatar"
+                        />
+                    </div>
+                    <div class="media-body">
+                        <div class="mf-content">I am hungry</div>
+                        <small class="mf-date">
+                            <i class="fa fa-clock-o"></i> 20/02/2015 at 09:30
+                        </small>
+                    </div>
+                </div>
+
+                <div class="message-feed media">
+                    <div class="pull-left">
+                        <img
+                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                            alt=""
+                            class="img-avatar"
+                        />
+                    </div>
+                    <div class="media-body">
+                        <div class="mf-content">Let's have pizza</div>
+                        <small class="mf-date">
+                            <i class="fa fa-clock-o"></i> 20/02/2015 at 09:33
+                        </small>
+                    </div>
+                </div>
+
+                <div class="msb-reply">
+                    <textarea placeholder="What's on your mind..."></textarea>
+                    <button>
+                        <i class="fa fa-paper-plane-o"></i>
+                    </button>
+                </div>
+            </div>
+        );
+    }
 }
 
 //Adding redux state as props to this component

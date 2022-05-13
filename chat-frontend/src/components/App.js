@@ -1,17 +1,29 @@
 import React from "react";
-import webSocketServer from "./websocket";
+import webSocketServer from "../websocket";
 import { connect } from "react-redux";
-import * as actions from "./redux-store/actions";
+import * as authActions from "../redux-store/actions/authActions";
+import * as messageActions from "../redux-store/actions/messageActions";
+import Chat from "./Chat";
+import SidePanel from "./SidePanel";
 class App extends React.Component {
     constructor(props) {
         super(props);
+        is_authenticated();
         // webSocketServer.setMessageHandlers(
         //     this.props.loadMessages,
         //     this.props.addMessage
         // );
     }
-}
 
+    render() {
+        return (
+            <div>
+                <SidePanel />
+                <Chat />
+            </div>
+        );
+    }
+}
 const mapStateToProps = (state) => {
     return {
         currentUser: state.auth.currentUser.username,
@@ -20,13 +32,9 @@ const mapStateToProps = (state) => {
     };
 };
 
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         addMessage: (message) =>
-//             dispatch(actions.messageActions.addMessage(message)),
-//         loadMessages: (messages) =>
-//             dispatch(actions.messageActions.loadMessages(messages)),
-//     };
-// };
-const mapDispatchToProps = (dispatch) => {};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        is_authenticated: () => dispatch(actions.checkAuth),
+    };
+};
 export default connect(mapStateToProps, mapDispatchToProps)(App);

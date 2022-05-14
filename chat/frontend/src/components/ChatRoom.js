@@ -1,5 +1,5 @@
 import React from "react";
-import WebSocketServer from "../websocket";
+import socketServerInstance from "../websocket";
 import { connect } from "react-redux";
 import * as actions from "../redux-store/actions/authActions";
 
@@ -9,16 +9,16 @@ import * as actions from "../redux-store/actions/authActions";
 //
 class ChatRoom extends React.Component {
     buildConnection = (chatID) => {
-        WebSocketServer.connect(chatID);
+        socketServerInstance.connect(chatID);
         setTimeout(() => {
-            if (WebSocketServer.isConectionMade(chatID)) {
+            if (socketServerInstance.isConnectionMade(chatID)) {
                 console.log(`Connectionto chat: ${chatID} successfully made`);
-                WebSocketServer.setMessageHandlers(
+                socketServerInstance.setMessageHandlers(
                     chatID,
                     this.props.loadMessages,
                     this.props.addMessage
                 );
-                WebSocketServer.sendMessage(chatID, {
+                socketServerInstance.sendMessage(chatID, {
                     request: "previous_messages",
                 });
             }
@@ -26,9 +26,14 @@ class ChatRoom extends React.Component {
     };
     constructor(props) {
         super(props);
+        this.state = {
+            messages: [],
+            message: "",
+        };
+
         this.state.path = window.location.pathname;
         let chatID = this.state.path.split("/chat/").pop();
-        buildConnection(chatID);
+        this.buildConnection(chatID);
     }
 
     componentDidMount() {
@@ -60,43 +65,43 @@ class ChatRoom extends React.Component {
 
     TopPanel(props) {
         return (
-            <div class="action-header clearfix">
-                <div class="visible-xs" id="ms-menu-trigger">
-                    <i class="fa fa-bars"></i>
+            <div className="action-header clearfix">
+                <div className="visible-xs" id="ms-menu-trigger">
+                    <i className="fa fa-bars"></i>
                 </div>
 
-                <div class="pull-left hidden-xs">
+                <div className="pull-left hidden-xs">
                     <img
                         src="https://bootdey.com/img/Content/avatar/avatar2.png"
                         alt=""
-                        class="img-avatar m-r-10"
+                        className="img-avatar m-r-10"
                     />
-                    <div class="lv-avatar pull-left"></div>
+                    <div className="lv-avatar pull-left"></div>
                     <span>David Parbell</span>
                 </div>
 
-                <ul class="ah-actions actions">
+                <ul className="ah-actions actions">
                     <li>
                         <a href="">
-                            <i class="fa fa-trash"></i>
+                            <i className="fa fa-trash"></i>
                         </a>
                     </li>
                     <li>
                         <a href="">
-                            <i class="fa fa-check"></i>
+                            <i className="fa fa-check"></i>
                         </a>
                     </li>
                     <li>
                         <a href="">
-                            <i class="fa fa-clock-o"></i>
+                            <i className="fa fa-clock-o"></i>
                         </a>
                     </li>
-                    <li class="dropdown">
+                    <li className="dropdown">
                         <a href="" data-toggle="dropdown" aria-expanded="true">
-                            <i class="fa fa-sort"></i>
+                            <i className="fa fa-sort"></i>
                         </a>
 
-                        <ul class="dropdown-menu dropdown-menu-right">
+                        <ul className="dropdown-menu dropdown-menu-right">
                             <li>
                                 <a href="">Latest</a>
                             </li>
@@ -105,12 +110,12 @@ class ChatRoom extends React.Component {
                             </li>
                         </ul>
                     </li>
-                    <li class="dropdown">
+                    <li className="dropdown">
                         <a href="" data-toggle="dropdown" aria-expanded="true">
-                            <i class="fa fa-bars"></i>
+                            <i className="fa fa-bars"></i>
                         </a>
 
-                        <ul class="dropdown-menu dropdown-menu-right">
+                        <ul className="dropdown-menu dropdown-menu-right">
                             <li>
                                 <a href="">Refresh</a>
                             </li>
@@ -142,44 +147,46 @@ class ChatRoom extends React.Component {
 
     render() {
         return (
-            <div class="ms-body">
+            <div className="ms-body">
                 <this.TopPanel />
-                <div class="message-feed right">
-                    <div class="pull-right">
+                <div className="message-feed right">
+                    <div className="pull-right">
                         <img
                             src="https://bootdey.com/img/Content/avatar/avatar2.png"
                             alt=""
-                            class="img-avatar"
+                            className="img-avatar"
                         />
                     </div>
-                    <div class="media-body">
-                        <div class="mf-content">I am hungry</div>
-                        <small class="mf-date">
-                            <i class="fa fa-clock-o"></i> 20/02/2015 at 09:30
+                    <div className="media-body">
+                        <div className="mf-content">I am hungry</div>
+                        <small className="mf-date">
+                            <i className="fa fa-clock-o"></i> 20/02/2015 at
+                            09:30
                         </small>
                     </div>
                 </div>
 
-                <div class="message-feed media">
-                    <div class="pull-left">
+                <div className="message-feed media">
+                    <div className="pull-left">
                         <img
                             src="https://bootdey.com/img/Content/avatar/avatar1.png"
                             alt=""
-                            class="img-avatar"
+                            className="img-avatar"
                         />
                     </div>
-                    <div class="media-body">
-                        <div class="mf-content">Let's have pizza</div>
-                        <small class="mf-date">
-                            <i class="fa fa-clock-o"></i> 20/02/2015 at 09:33
+                    <div className="media-body">
+                        <div className="mf-content">Let's have pizza</div>
+                        <small className="mf-date">
+                            <i className="fa fa-clock-o"></i> 20/02/2015 at
+                            09:33
                         </small>
                     </div>
                 </div>
 
-                <div class="msb-reply">
+                <div className="msb-reply">
                     <textarea placeholder="What's on your mind..."></textarea>
                     <button>
-                        <i class="fa fa-paper-plane-o"></i>
+                        <i className="fa fa-paper-plane-o"></i>
                     </button>
                 </div>
             </div>
@@ -190,11 +197,11 @@ class ChatRoom extends React.Component {
 //Adding redux state as props to this component
 const mapStateToProps = (state, ownProps) => {
     return {
-        currentUser: state.auth.currentUser.username,
+        currentUser: state.currentUser,
         //messages need to be retreieved dynamically for each rendering
         // unlike chatID. Redux suits
         // messages: state.message.messages,
-        messages: state.chats[ownProps.chatID].messages,
+        // messages: state.chats[ownProps.chatID].messages,
     };
 };
 

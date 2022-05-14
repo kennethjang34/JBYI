@@ -2,6 +2,10 @@
 **/dist
 **/node_modules
 **/node_modules/**
-**/__pycache__
+**/__pycache__/
 **/__pycache__/**
-
+**/**/__pycache__
+__pycache__
+**/**/.parcel-cache
+**/**/**/__pycache__
+chat/api/__pycache__

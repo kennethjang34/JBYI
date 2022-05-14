@@ -2,7 +2,6 @@ const baseURLForWebsocket = "ws://127.0.0.1:8000/ws/chat";
 //Don't create server instance directly! Always use getServerInstance(). For singleton pattern
 class WebSocketServer {
     static serverInstance = null;
-
     sockets = {};
     static getServerInstance() {
         if (!WebSocketServer.serverInstance) {
@@ -25,10 +24,10 @@ class WebSocketServer {
             console.log("User must specify chat room ID");
             return;
         } else {
-            url = `${baseURLForWebsocket}/${chatID}`;
+            const url = `${baseURLForWebsocket}/${chatID}`;
             // url = `ws://127.0.0.1:8000/ws/chat/${chatID}/`;
             console.log(`Connection try. URL: ${url}`);
-            socketInstance = new WebSocket(url);
+            const socketInstance = new WebSocket(url);
             socketInstance.chatID = chatID;
             if (!this.sockets[chatID]) {
                 this.sockets[chatID] = {
@@ -67,7 +66,7 @@ class WebSocketServer {
     };
 
     isConnectionMade = (chatID) => {
-        webSocket = this.sockets[chatID].socket;
+        const webSocket = this.sockets[chatID].socket;
         if (webSocket && webSocket.readyState) {
             return true;
         } else {
@@ -77,7 +76,7 @@ class WebSocketServer {
 
     deleteSocket = (chatID) => {
         try {
-            webSocket = this.sockets[chatID].socket;
+            const webSocket = this.sockets[chatID].socket;
             delete this.sockets.chatID;
             // this.sockets.splice(this.sockets.indexOf(webSocket), 1);
             webSocket.close();
@@ -88,7 +87,7 @@ class WebSocketServer {
 
     sendMessage = (chatID, data) => {
         try {
-            webSocket = this.sockets[chatID].socket;
+            const webSocket = this.sockets[chatID].socket;
             webSocket.send(JSON.stringify({ ...data }));
         } catch (error) {
             console.log(error.message);
@@ -110,5 +109,5 @@ class WebSocketServer {
     };
 }
 
-serverInstance = WebSocketServer.getServerInstance();
+const serverInstance = WebSocketServer.getServerInstance();
 export default serverInstance;

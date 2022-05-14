@@ -23,11 +23,13 @@ const composeEnhancers =
     compose;
 
 export const store = createStore(
-    combineReducers({
-        auth: authReducer,
-        // nav: navReducer,
-        message: messageReducer,
-    }),
+    authReducer,
+    // combineReducers({
+    //     auth: authReducer,
+    //     // nav: navReducer,
+    //     // message: messageReducer,
+    //     // chat: chatReducer,
+    // }),
     composeEnhancers(applyMiddleware(thunk))
 );
 

@@ -8,7 +8,7 @@ import SidePanel from "./SidePanel";
 class ChatApp extends React.Component {
     constructor(props) {
         super(props);
-        checkAuth();
+        props.checkAuth();
         // webSocketServer.setMessageHandlers(
         //     this.props.loadMessages,
         //     this.props.addMessage
@@ -27,15 +27,15 @@ class ChatApp extends React.Component {
 const mapStateToProps = (state) => {
     return {
         //When the component is created, it is assumed that user has logged in already
-        currentUser: state.auth.currentUser.username,
-        //state.chat.chats: list of chats. Each chat contains messges belonging to that chat room
-        chats: state.chat.chats,
+        currentUser: state.currentUser,
+        //state.chat.chats: list of chat id's of the user
+        // chats: state.chat.chats,
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // checkAuth: () => dispatch(authActions.checkAuthAction),
+        checkAuth: () => dispatch(authActions.checkAuthAction),
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ChatApp);

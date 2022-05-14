@@ -6,10 +6,11 @@ import * as messageActions from "../redux-store/actions/messageActions";
 import ChatRoom from "./ChatRoom";
 import ChatApp from "./ChatApp";
 import SidePanel from "./SidePanel";
+import { checkAuthAction } from "../redux-store/actions/authActions";
 class App extends React.Component {
     constructor(props) {
         super(props);
-        checkAuth();
+        this.props.checkAuth();
     }
 
     render() {

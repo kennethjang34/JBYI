@@ -20,6 +20,7 @@ class ChatRoom extends React.Component {
                 );
                 socketServerInstance.sendMessage(chatID, {
                     request: "previous_messages",
+                    chatID: chatID,
                 });
             }
         }, 200);
@@ -145,49 +146,72 @@ class ChatRoom extends React.Component {
         );
     }
 
+    renderMessages(messages) {
+        const messages_rendered = messages.map((message) => {
+            <li
+                key={message.messageID}
+                className={message.author === currentUser ? "sent" : "replies"}
+            />;
+            <p>
+                {message.content}
+                <br />
+                <small
+                    className={
+                        message.author === currentUser ? "sent" : "replies"
+                    }
+                >
+                    {this.renderTimestamp(message.timestamp)}
+                </small>
+            </p>;
+        });
+        return <ul></ul>;
+    }
+
     render() {
         return (
-            <div className="ms-body">
+            <div>
                 <this.TopPanel />
-                <div className="message-feed right">
-                    <div className="pull-right">
-                        <img
-                            src="https://bootdey.com/img/Content/avatar/avatar2.png"
-                            alt=""
-                            className="img-avatar"
-                        />
+                <div className="ms-body">
+                    <div className="message-feed right">
+                        <div className="pull-right">
+                            <img
+                                src="https://bootdey.com/img/Content/avatar/avatar2.png"
+                                alt=""
+                                className="img-avatar"
+                            />
+                        </div>
+                        <div className="media-body">
+                            <div className="mf-content">I am hungry</div>
+                            <small className="mf-date">
+                                <i className="fa fa-clock-o"></i> 20/02/2015 at
+                                09:30
+                            </small>
+                        </div>
                     </div>
-                    <div className="media-body">
-                        <div className="mf-content">I am hungry</div>
-                        <small className="mf-date">
-                            <i className="fa fa-clock-o"></i> 20/02/2015 at
-                            09:30
-                        </small>
-                    </div>
-                </div>
 
-                <div className="message-feed media">
-                    <div className="pull-left">
-                        <img
-                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                            alt=""
-                            className="img-avatar"
-                        />
+                    <div className="message-feed media">
+                        <div className="pull-left">
+                            <img
+                                src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                                alt=""
+                                className="img-avatar"
+                            />
+                        </div>
+                        <div className="media-body">
+                            <div className="mf-content">Let's have pizza</div>
+                            <small className="mf-date">
+                                <i className="fa fa-clock-o"></i> 20/02/2015 at
+                                09:33
+                            </small>
+                        </div>
                     </div>
-                    <div className="media-body">
-                        <div className="mf-content">Let's have pizza</div>
-                        <small className="mf-date">
-                            <i className="fa fa-clock-o"></i> 20/02/2015 at
-                            09:33
-                        </small>
-                    </div>
-                </div>
 
-                <div className="msb-reply">
-                    <textarea placeholder="What's on your mind..."></textarea>
-                    <button>
-                        <i className="fa fa-paper-plane-o"></i>
-                    </button>
+                    <div className="msb-reply">
+                        <textarea placeholder="What's on your mind..."></textarea>
+                        <button>
+                            <i className="fa fa-paper-plane-o"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         );

@@ -1,40 +1,59 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
+
 from chat.api.views import get_chat_rooms
 from chat.api.serializers import *
 from .models import Message, Chat
 import datetime
 from django.shortcuts import get_object_or_404
+from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
 
 
-class ChatConsumer(WebsocketConsumer):
+class ChatConsumer(AsyncWebsocketConsumer):
     @staticmethod
     def message_to_json(message):
         return json.dumps(message)
 
     # ChatConsumer assumes the chat room has already been created
     @staticmethod
-    def get_chat_room(room_name):
+    async def get_chat_room(chatID):
         # Chat.objects.get_or_create(
         #     participants=self., defaults={"messages": [], "timestamp": datetime()}
         # )
-        return get_object_or_404(Chat, room_name)
+        list()
+        chats = await database_sync_to_async(Chat.objects.all)()
+        await database_sync_to_async(print)(chats)
+        chat = await database_sync_to_async(get_object_or_404)(Chat, pk=chatID)
+        # print(chat)
+        return chat
+
+    @staticmethod
+    @database_sync_to_async
+    def get_serialized_messages(messages):
+        serialized_queryset = MessageSerializer(messages, many=True).data
+        return list(serialized_queryset)
 
     # messages: queryset of Message model instances
     @staticmethod
-    def messages_to_json(messages):
-        serialized_messages = MessageSerializer(messages, many=True).data
+    async def messages_to_json(messages):
+        message_list = await ChatConsumer.get_serialized_messages(messages)
+        # serialized_messages = message_list.data
         json_messages = []
-        for message in serialized_messages:
+        for message in message_list:
             json_messages.append(ChatConsumer.message_to_json(message))
 
         return json_messages
 
-    def handle_previous_message_request(self, data):
+    async def handle_previous_message_request(self, data):
         # chat_room: must be an instance of Chat model
-        chat_room = ChatConsumer.get_chat_room(self.room_name)
+        # print(self)
+        # print(data)
+        chat_room = await ChatConsumer.get_chat_room(data["chatID"])
         messages = chat_room.messages
-        json_messages = ChatConsumer.messages_to_json(messages)
+
+        json_messages = await ChatConsumer.messages_to_json(messages)
         self.send_previous_messages(json_messages)
 
     async def connect(self):
@@ -47,7 +66,7 @@ class ChatConsumer(WebsocketConsumer):
         # self.send_previous_messages(chat_room.messages)
 
     async def disconnect(self, close_code):
-        self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def send_new_message(self, message):
         # Send message to room group
@@ -59,15 +78,16 @@ class ChatConsumer(WebsocketConsumer):
     # new message arrives at the server. called once only for each new message
     async def receive(self, text_data):
         data = json.loads(text_data)
-        request = data.request
+        print(data)
+        request = data["request"]
         if request == "previous_messages":
-            self.handle_previous_message_request(data)
+            await self.handle_previous_message_request(data)
         else:
             message = data["message"]
             MessageSerializer(data=message)
             # will create and save a new message model instance from message(only once for each new message)
             MessageSerializer.save()
-            self.send_new_message(message)
+            await self.send_new_message(message)
 
     # messages must be in json
     async def send_previous_messages(self, messages):

@@ -8,6 +8,7 @@ import SidePanel from "./SidePanel";
 class ChatApp extends React.Component {
     constructor(props) {
         super(props);
+        //Okay. Is the status of current user still valid?
         props.checkAuth();
         // webSocketServer.setMessageHandlers(
         //     this.props.loadMessages,
@@ -18,6 +19,7 @@ class ChatApp extends React.Component {
     render() {
         return (
             <div>
+                {/* <TopPanel currentUser={currentUser} /> */}
                 <SidePanel />
                 <ChatRoom />
             </div>

@@ -4,18 +4,20 @@ from chat.models import *
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    class meta:
+    class Meta:
         model = Message
-        fields = ("content", "date", "timestamp")
+        fields = ("content", "author", "timestamp")
 
 
-class ParticipantSerializer(serializers.ModelSerializer):
-    class meta:
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
         model = Account
         fields = ("user", "friends", "timestamp")
 
 
 class ChatSerializer(serializers.ModelSerializer):
-    class meta:
+    participants = AccountSerializer()
+
+    class Meta:
         model: Chat
         fields = ("participants", "messages", "timestamp")

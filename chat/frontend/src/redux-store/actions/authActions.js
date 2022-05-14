@@ -71,5 +71,3 @@ export const checkAuthAction = (dispatch, getState) => {
         }
     }
 };
-
-// loginAction("jang", "jang");

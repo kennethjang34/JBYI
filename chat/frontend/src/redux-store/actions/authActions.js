@@ -1,8 +1,30 @@
 import * as actionTypes from "./actionTypes";
+
 import axios from "axios";
 
 //********************* */
 axios.defaults.baseURL = "http://127.0.0.1:8000/api-auth/";
+
+export const authStart = () => {
+    return {
+        type: actionTypes.AUTH_START,
+    };
+};
+
+export const loginSuccess = (username, token) => {
+    return {
+        type: actionTypes.LOGIN_SUCCESS,
+        token: token,
+        username: username,
+    };
+};
+
+export const loginFail = (error) => {
+    return {
+        type: actionTypes.LOGIN_FAIL,
+        error: error,
+    };
+};
 
 export const logoutAction = (dispatch, getState) => {
     localStorage.removeItem("token");
@@ -16,11 +38,9 @@ export const logoutAction = (dispatch, getState) => {
 //returns function object for redux thunk
 export const loginAction = (username, password) => {
     return (dispatch, getState) => {
-        dispatch({
-            type: actionTypes.LOGIN_START,
-        });
+        dispatch(authStart());
         axios
-            .post("login", {
+            .post("login/", {
                 username: username,
                 password: password,
             })
@@ -35,17 +55,45 @@ export const loginAction = (username, password) => {
                 localStorage.setItem("token", token);
                 localStorage.setItem("expirationTime", expirationTime);
                 dispatch({
-                    type: actionTypes.AUTH_SUCCESS,
+                    type: actionTypes.LOGIN_SUCCESS,
                     currentUser: username,
                     token: token,
                 });
-                dispatch(authActions.setLogOutTimer(3600 * 100));
+                dispatch(setLogOutTimer(3600 * 100));
             });
     };
 };
 export const getBoundedFunction = (dispatch, action) => {
     return () => {
         dispatch(action);
+    };
+};
+
+export const signUpAction = (username, email, password1, password2) => {
+    return (dispatch) => {
+        dispatch(authStart());
+        axios
+            .post("registration/", {
+                username: username,
+                email: email,
+                password1: password1,
+                password2: password2,
+            })
+            .then((res) => {
+                const token = res.data.key;
+                const expirationDate = new Date(
+                    //1 hour time out
+                    new Date().getTime() + 3600 * 1000
+                );
+                localStorage.setItem("token", token);
+                localStorage.setItem("username", username);
+                localStorage.setItem("expirationDate", expirationDate);
+                dispatch(authSuccess(username, token));
+                dispatch(checkAuthTimeout(3600));
+            })
+            .catch((err) => {
+                dispatch(loginFail(err));
+            });
     };
 };
 

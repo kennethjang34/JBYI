@@ -199,7 +199,19 @@ class ChatRoom extends React.Component {
         }
     };
 
+    scrollToBottom() {
+        this.lastMessage.scrollIntoView({ behavior: "smooth" });
+    }
+
+    componentDidMount() {
+        this.scrollToBottom();
+    }
+    componentDidUpdate() {
+        this.scrollToBottom();
+    }
+
     renderMessages = (messages) => {
+        console.log(this.props.currentUser);
         const messages_rendered = messages.map((message, index) => {
             return (
                 <li className="message-feed" key={index}>
@@ -249,7 +261,12 @@ class ChatRoom extends React.Component {
                     </div> */}
                     <ul>{messages && this.renderMessages(messages)}</ul>
                 </div>
-
+                <div
+                    style={{ float: "left", clear: "both" }}
+                    ref={(msg) => {
+                        this.lastMessage = msg;
+                    }}
+                ></div>
                 <div className="pull-left">
                     <img
                         src="https://bootdey.com/img/Content/avatar/avatar1.png"
@@ -257,6 +274,7 @@ class ChatRoom extends React.Component {
                         className="img-avatar"
                     />
                 </div>
+
                 <div className="msb-reply">
                     <form onSubmit={this.sendMessage}>
                         <textarea

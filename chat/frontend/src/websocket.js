@@ -90,7 +90,8 @@ class WebSocketServer {
     sendMessage = (chatID, data) => {
         try {
             const webSocket = this.sockets[chatID].socket;
-            // console.log(data);
+            console.log(JSON.stringify({ ...data }));
+            console.log({ ...data });
             webSocket.send(JSON.stringify({ ...data }));
         } catch (error) {
             console.log(error.message);
@@ -100,7 +101,6 @@ class WebSocketServer {
     socketMessageHandler = (data) => {
         const parsedData = JSON.parse(data);
         const messageType = parsedData.message_type;
-
         switch (messageType) {
             case "previous_messages":
                 const messages = parsedData.messages.map((jsonString) =>
@@ -112,7 +112,8 @@ class WebSocketServer {
                 );
                 break;
             case "new_message":
-                const message = JSON.parse(parsedData.message);
+                // const message = JSON.parse(parsedData.message);
+                const message = parsedData.message;
                 this.sockets[parsedData.chatID].newMessageHandler(
                     parsedData.chatID,
                     message

@@ -12,7 +12,8 @@ const initialState = {
 };
 
 const addMessage = (state, action) => {
-    const chat = state[action.chatID];
+    console.log(state);
+    const chat = state.chats[action.chatID];
     const messages = [...chat.messages, action.message];
     const chats = { ...state.chats };
     chats[action.chatID] = { messages: messages };
@@ -21,24 +22,15 @@ const addMessage = (state, action) => {
 
 const loadMessages = (state, action) => {
     const chats = { ...state.chats };
-    chats[action.chatID] = { messages: action.messages.reverse() };
+    chats[action.chatID] = {
+        messages: action.messages ? action.messages.reverse() : [],
+    };
     return { ...state, chats: { ...chats } };
 };
 
 const selectChat = (state, action) => {
     return { ...state, selected: action.selectedChatID };
 };
-
-// const messageReducer = (state = initialState, action) => {
-//     switch (action.type) {
-//         case actionTypes.LOAD_MESSAGE:
-//             return loadMessages(state, action);
-//         case actionTypes.ADD_MESSAGE:
-//             return addMessage(state, action);
-//         default:
-//             return state;
-//     }
-// };
 
 export default reducer = (state = initialState, action) => {
     switch (action.type) {

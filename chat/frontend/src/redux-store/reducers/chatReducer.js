@@ -12,7 +12,6 @@ const initialState = {
 };
 
 const addMessage = (state, action) => {
-    console.log(state);
     const chat = state.chats[action.chatID];
     const messages = [...chat.messages, action.message];
     const chats = { ...state.chats };

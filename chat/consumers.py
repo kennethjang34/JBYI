@@ -49,7 +49,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # chat_room: must be an instance of Chat model
         chat_room = await ChatConsumer.get_chat_room(data["chatID"])
         messages = chat_room.messages
-
         json_messages = await ChatConsumer.messages_to_json(messages)
         await self.send_previous_messages(data["chatID"], json_messages)
 
@@ -57,10 +56,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = "chat_%s" % self.room_name
         # Join room group
-        self.channel_layer.group_add(self.room_group_name, self.channel_name)
-        # chat_room = ChatConsumer.get_chat_room(self.room_name)
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
-        # self.send_previous_messages(chat_room.messages)
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
@@ -72,7 +69,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 "type": "chat_message_arrive",
                 "message": {
-                    "request": "new_message",
+                    "message_type": "new_message",
                     "chatID": chatID,
                     "message": message,
                 },
@@ -94,7 +91,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             account = await sync_to_async(get_object_or_404)(
                 Account, pk=message["author"]
             )
-            print(message)
+            # print(message)
             chat_objs = await sync_to_async(Chat.objects.all)()
             if type(message["chatID"]) == type(list()):
                 chats = await sync_to_async(chat_objs.filter)(pk__in=message["chatID"])
@@ -104,24 +101,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 author=account, content=message["content"]
             )
 
-            for chat in chats:
-                await sync_to_async(chat.messages.add)(messageObj)
+            # for chat in chats:
+            #     await sync_to_async(chat.messages.add)(messageObj)
 
-            # await sync_to_async(messageObj.chats.set)(chats)
-            # await sync_to_async(print)((await sync_to_async(chats[0].messages.all)()))
-            # for testing only
-
-            # serializer = MessageSerializer(data=message, partial=True)
-            # will create and save a new message model instance from message(only once for each new message)
-            # if await sync_to_async(serializer.is_valid)():
-            #     await sync_to_async(serializer.save)()
-            #     print(serializer.data)
-
-            #     # print(serializer.data)
-            # else:
-            #     print(
-            #         f"error occurred. new message request. Message: {message}, serialized: {serializer.data}"
-            #     )
+            await sync_to_async(messageObj.chats.set)(chats)
             await self.send_new_message(chatID=message["chatID"], message=message)
 
     # messages must be in json
@@ -139,9 +122,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group (not from the frontend socket)
     async def chat_message_arrive(self, event):
-        # print("abs")
         # Send message to WebSocket
         # await self.send(text_data=json.dumps({message}))
         # event["message"] is assumed to be in json already
         # just propagate
-        await self.send(text_data=event["message"])
+        await self.send(text_data=json.dumps(event["message"]))

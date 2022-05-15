@@ -11,6 +11,21 @@ import serverInstance from "../websocket";
 //
 class ChatRoom extends React.Component {
     buildConnection = (chatID) => {
+        if (
+            socketServerInstance.sockets[chatID] &&
+            socketServerInstance.sockets[chatID].socket
+        ) {
+            console.log(`Connectionto chat: ${chatID} already exists`);
+            socketServerInstance.setMessageHandlers(
+                chatID,
+                this.props.loadMessages,
+                this.props.addMessage
+            );
+            socketServerInstance.sendMessage(chatID, {
+                request: "previous_messages",
+                chatID: chatID,
+            });
+        }
         socketServerInstance.connect(chatID);
         setTimeout(() => {
             if (socketServerInstance.isConnectionMade(chatID)) {
@@ -74,8 +89,9 @@ class ChatRoom extends React.Component {
         const timePassed = Math.round(
             (new Date().getTime() - date.getTime()) / 60000
         );
-
-        if (timePassed < 60 && timePassed >= 1) {
+        if (timePassed < 1) {
+            trimmed = "Just sent";
+        } else if (timePassed < 60 && timePassed >= 1) {
             trimmed = `${timePassed} minutes ago `;
         } else if (timePassed < 24 * 60 && timePassed >= 60) {
             trimmed = `${Math.round(timePassed / 60)} hours ago`;
@@ -174,7 +190,6 @@ class ChatRoom extends React.Component {
     };
 
     renderMessages(messages) {
-        console.log(messages);
         const messages_rendered = messages.map((message) => {
             return (
                 <div className="message-feed ">
@@ -205,8 +220,11 @@ class ChatRoom extends React.Component {
     }
 
     render() {
-        const messages = this.props.messages;
-
+        let messages = [];
+        if (this.props.chat && this.props.chat.messages) {
+            messages = this.props.chat.messages;
+        }
+        console.log(this.props.chat);
         return (
             <div>
                 <this.TopPanel />
@@ -234,10 +252,10 @@ class ChatRoom extends React.Component {
                     <form onSubmit={this.sendMessage}>
                         <textarea
                             placeholder="Enter message"
-                            value={this.state.input}
-                            required
                             onChange={this.changeCurrentInput}
-                        ></textarea>
+                        >
+                            {this.state.input}
+                        </textarea>
                         <i
                             className="fa fa-paperclip attachment"
                             aria-hidden="true"
@@ -266,10 +284,11 @@ const mapStateToProps = (state, ownProps) => {
 
         //************** */
         //only for now!!
+        chat: state.chat.chats[ownProps.chatID],
 
-        messages: state.chat.chats[ownProps.chatID]
-            ? state.chat.chats[ownProps.chatID].messages
-            : [],
+        // messages: state.chat.chats[ownProps.chatID]
+        //     ? state.chat.chats[ownProps.chatID].messages
+        //     : [],
 
         currentUser: state.auth.currentUser,
     };

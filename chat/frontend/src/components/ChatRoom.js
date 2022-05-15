@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import * as authActions from "../redux-store/actions/authActions";
 import * as messageActions from "../redux-store/actions/chatActions";
 import * as chatActions from "../redux-store/actions/chatActions";
+import serverInstance from "../websocket";
 //The user authentication must be global. => redux
 //Chat component is react-based chat UI for each chat room. ChatID doesn't have to be global.
 //ChatID is an instance-specific prop
@@ -40,12 +41,31 @@ class ChatRoom extends React.Component {
         this.buildConnection(chatID);
     }
 
-    componentDidMount() {
+    // componentDidMount() {
+    //     this.setState({
+    //         //input: text input from the user for a message
+    //         input: "",
+    //     });
+    // }
+
+    sendMessage = (event) => {
+        event.preventDefault();
+        const message = {
+            author: this.props.currentUser,
+            //This needs to be changed
+            content: this.state.input,
+            //Planning to change it to a list
+            chatID: window.location.pathname.split("/chat/").pop(),
+            // timestamp: new Date().getDate() / 1000,
+        };
+        serverInstance.sendMessage(message.chatID, {
+            request: "new_message",
+            message: message,
+        });
         this.setState({
-            //input: text input from the user for a message
             input: "",
         });
-    }
+    };
 
     trimTimestamp(timestamp) {
         let trimmed = "";
@@ -149,6 +169,10 @@ class ChatRoom extends React.Component {
         );
     }
 
+    changeCurrentInput = (event) => {
+        this.state.input = event.target.value;
+    };
+
     renderMessages(messages) {
         console.log(messages);
         const messages_rendered = messages.map((message) => {
@@ -182,8 +206,7 @@ class ChatRoom extends React.Component {
 
     render() {
         const messages = this.props.messages;
-        console.log("fadsds");
-        console.log(messages);
+
         return (
             <div>
                 <this.TopPanel />
@@ -196,9 +219,7 @@ class ChatRoom extends React.Component {
                             className="img-avatar"
                         />
                     </div> */}
-                    <ul>
-                        {messages && this.renderMessages(messages.reverse())}
-                    </ul>
+                    <ul>{messages && this.renderMessages(messages)}</ul>
                 </div>
 
                 <div className="pull-left">
@@ -210,10 +231,25 @@ class ChatRoom extends React.Component {
                 </div>
 
                 <div className="msb-reply">
-                    <textarea placeholder="Enter message"></textarea>
-                    <button>
-                        <i className="fa fa-paper-plane-o"></i>
-                    </button>
+                    <form onSubmit={this.sendMessage}>
+                        <textarea
+                            placeholder="Enter message"
+                            value={this.state.input}
+                            required
+                            onChange={this.changeCurrentInput}
+                        ></textarea>
+                        <i
+                            className="fa fa-paperclip attachment"
+                            aria-hidden="true"
+                        ></i>
+                        <button
+                            className="submit"
+                            // onClick={this.sendMessage}
+                            // value={this.state.input}
+                        >
+                            <i className="fa fa-paper-plane-o"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         );

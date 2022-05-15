@@ -4,7 +4,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from chat.api.views import get_chat_rooms
 from chat.api.serializers import *
-from .models import Message, Chat
+from .models import Message, Chat, Account
 import datetime
 from django.shortcuts import get_object_or_404
 from asgiref.sync import sync_to_async
@@ -89,11 +89,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.handle_previous_message_request(data)
         else:
             message = data["message"]
-            MessageSerializer(data=message)
-            # will create and save a new message model instance from message(only once for each new message)
-            MessageSerializer.save()
+            message["author"] = "admin"
+            message["chats"] = message["chatID"]
+            account = await sync_to_async(get_object_or_404)(
+                Account, pk=message["author"]
+            )
+            print(message)
+            chat_objs = await sync_to_async(Chat.objects.all)()
+            if type(message["chatID"]) == type(list()):
+                chats = await sync_to_async(chat_objs.filter)(pk__in=message["chatID"])
+            else:
+                chats = await sync_to_async(chat_objs.filter)(pk=message["chatID"])
+            messageObj = await sync_to_async(Message.objects.create)(
+                author=account, content=message["content"]
+            )
 
-            await self.send_new_message(chatID=data["chatID"], message=message)
+            for chat in chats:
+                await sync_to_async(chat.messages.add)(messageObj)
+
+            # await sync_to_async(messageObj.chats.set)(chats)
+            # await sync_to_async(print)((await sync_to_async(chats[0].messages.all)()))
+            # for testing only
+
+            # serializer = MessageSerializer(data=message, partial=True)
+            # will create and save a new message model instance from message(only once for each new message)
+            # if await sync_to_async(serializer.is_valid)():
+            #     await sync_to_async(serializer.save)()
+            #     print(serializer.data)
+
+            #     # print(serializer.data)
+            # else:
+            #     print(
+            #         f"error occurred. new message request. Message: {message}, serialized: {serializer.data}"
+            #     )
+            await self.send_new_message(chatID=message["chatID"], message=message)
 
     # messages must be in json
     async def send_previous_messages(self, chatID, messages):

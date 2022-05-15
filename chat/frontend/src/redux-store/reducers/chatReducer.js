@@ -21,8 +21,7 @@ const addMessage = (state, action) => {
 
 const loadMessages = (state, action) => {
     const chats = { ...state.chats };
-    chats[action.chatID] = { messages: action.messages };
-    console.log({ ...state, chats: { ...chats } });
+    chats[action.chatID] = { messages: action.messages.reverse() };
     return { ...state, chats: { ...chats } };
 };
 

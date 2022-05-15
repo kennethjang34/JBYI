@@ -18,7 +18,9 @@ def pkgen():
 
 
 class Message(models.Model):
-    messageID = models.CharField(max_length=255, primary_key=True, null=False)
+    messageID = models.CharField(
+        max_length=255, primary_key=True, null=False, default=pkgen
+    )
     author = models.ForeignKey(
         "Account",
         related_name="messages_sent",

@@ -35,6 +35,8 @@ class WebSocketServer {
                     previousMessagesHandler: undefined,
                     newMessageHandler: undefined,
                 };
+            } else {
+                this.sockets[chatID].socket = socketInstance;
             }
             socketInstance.onopen = () => {
                 console.log(

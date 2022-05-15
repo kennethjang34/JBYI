@@ -103,7 +103,7 @@ class ChatRoom extends React.Component {
         return trimmed;
     }
 
-    TopPanel(props) {
+    TopPanel = (props) => {
         return (
             <div className="action-header clearfix">
                 <div className="visible-xs" id="ms-menu-trigger">
@@ -183,16 +183,26 @@ class ChatRoom extends React.Component {
                 </script>
             </div>
         );
-    }
-
-    changeCurrentInput = (event) => {
-        this.state.input = event.target.value;
     };
 
-    renderMessages(messages) {
-        const messages_rendered = messages.map((message) => {
+    changeCurrentInput = (event) => {
+        event.preventDefault();
+        this.setState({
+            input: event.target.value,
+        });
+    };
+
+    keypress = (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            this.sendMessage(event);
+        }
+    };
+
+    renderMessages = (messages) => {
+        const messages_rendered = messages.map((message, index) => {
             return (
-                <div className="message-feed ">
+                <li className="message-feed" key={index}>
                     <div
                         className={
                             message.author === this.props.currentUser
@@ -205,21 +215,21 @@ class ChatRoom extends React.Component {
                             alt=""
                             className="img-avatar"
                         />
+                        <p className="mf-content">
+                            {message.content}
+                            <br />
+                            <small className="mf-date">
+                                {this.trimTimestamp(message.timestamp)}
+                            </small>
+                        </p>
                     </div>
-                    <p className="mf-content">
-                        {message.content}
-                        <br />
-                        <small className="mf-date">
-                            {this.trimTimestamp(message.timestamp)}
-                        </small>
-                    </p>
-                </div>
+                </li>
             );
         });
         return messages_rendered;
-    }
+    };
 
-    render() {
+    render = () => {
         let messages = [];
         if (this.props.chat && this.props.chat.messages) {
             messages = this.props.chat.messages;
@@ -247,15 +257,16 @@ class ChatRoom extends React.Component {
                         className="img-avatar"
                     />
                 </div>
-
                 <div className="msb-reply">
                     <form onSubmit={this.sendMessage}>
                         <textarea
                             placeholder="Enter message"
                             onChange={this.changeCurrentInput}
-                        >
-                            {this.state.input}
-                        </textarea>
+                            onKeyPress={this.keypress}
+                            key="mesage-input"
+                            value={this.state.input}
+                            // defaultValue={this.state.input}
+                        />
                         <i
                             className="fa fa-paperclip attachment"
                             aria-hidden="true"
@@ -271,7 +282,7 @@ class ChatRoom extends React.Component {
                 </div>
             </div>
         );
-    }
+    };
 }
 
 //Adding redux state as props to this component

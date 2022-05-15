@@ -2,26 +2,22 @@ import React from "react";
 import webSocketServer from "../websocket";
 import { connect } from "react-redux";
 import * as authActions from "../redux-store/actions/authActions";
-import * as messageActions from "../redux-store/actions/messageActions";
+import * as messageActions from "../redux-store/actions/chatActions";
 import ChatRoom from "./ChatRoom";
 import SidePanel from "./SidePanel";
 class ChatApp extends React.Component {
     constructor(props) {
         super(props);
         //Okay. Is the status of current user still valid?
-        props.checkAuth();
-        // webSocketServer.setMessageHandlers(
-        //     this.props.loadMessages,
-        //     this.props.addMessage
-        // );
+        // props.checkAuth();
     }
 
     render() {
         return (
             <div>
                 {/* <TopPanel currentUser={currentUser} /> */}
-                <SidePanel />
-                <ChatRoom />
+                {/* <SidePanel /> */}
+                <ChatRoom chatID={this.props.selected} />
             </div>
         );
     }
@@ -29,9 +25,10 @@ class ChatApp extends React.Component {
 const mapStateToProps = (state) => {
     return {
         //When the component is created, it is assumed that user has logged in already
-        currentUser: state.currentUser,
+        currentUser: state.auth.currentUser,
         //state.chat.chats: list of chat id's of the user
-        // chats: state.chat.chats,
+        chats: state.chat.chats,
+        selected: state.chat.selected,
     };
 };
 

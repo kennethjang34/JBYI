@@ -9,10 +9,10 @@ class WebSocketServer {
         }
         return WebSocketServer.serverInstance;
     }
-    setMessageHandlers(chatID, previousMessageHandelr, newMessageHandler) {
+    setMessageHandlers(chatID, previousMessageHandler, newMessageHandler) {
         try {
             this.sockets[chatID].previousMessagesHandler =
-                previousMessageHandelr;
+                previousMessageHandler;
             this.sockets[chatID].newMessageHandler = newMessageHandler;
         } catch (error) {
             console.log(error.message);
@@ -36,13 +36,13 @@ class WebSocketServer {
                     newMessageHandler: undefined,
                 };
             }
-            socketInstance.onOpen = () => {
+            socketInstance.onopen = () => {
                 console.log(
                     `WebSocket connection successfully made. URL: ${url}`
                 );
             };
 
-            socketInstance.onClose = () => {
+            socketInstance.onclose = () => {
                 if (this.sockets[socketInstance.chatID]) {
                     console.log(
                         `WebSocket connection to: ${url} closed. reconnecting...`
@@ -55,11 +55,13 @@ class WebSocketServer {
                 }
             };
 
-            socketInstance.onError = (event) => {
+            socketInstance.onerror = (event) => {
                 console.log(event.message);
             };
 
-            socketInstance.onMessage = (event) => {
+            socketInstance.onmessage = (event) => {
+                // console.log("abcd");
+                // console.log(event.data);
                 this.socketMessageHandler(event.data);
             };
         }
@@ -98,14 +100,23 @@ class WebSocketServer {
     socketMessageHandler = (data) => {
         const parsedData = JSON.parse(data);
         const messageType = parsedData.message_type;
+
         switch (messageType) {
             case "previous_messages":
-                messages = parsedData.messages;
-                this.previousMessagesHandelr(messages);
+                const messages = parsedData.messages.map((jsonString) =>
+                    JSON.parse(jsonString)
+                );
+                this.sockets[parsedData.chatID].previousMessagesHandler(
+                    parsedData.chatID,
+                    messages
+                );
                 break;
             case "new_message":
-                message = parsedData.message;
-                this.newMessageHandler(message);
+                const message = JSON.parse(parsedData.message);
+                this.sockets[parsedData.chatID].newMessageHandler(
+                    parsedData.chatID,
+                    message
+                );
         }
     };
 }

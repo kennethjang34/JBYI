@@ -84,15 +84,27 @@ body {
 #footer, .fc-toolbar .ui-button, .fileinput .thumbnail, .four-zero, .four-zero footer>a, .ie-warning, .login-content, .login-navigation, .pt-inner, .pt-inner .pti-footer>a {
     text-align: center;
 }
-.message-feed.right>.pull-right {
+.message-feed .received {
     margin-left: 15px;
 }
-.message-feed:not(.right) .mf-content {
+.message-feed .sent .mf-content{
+    /* pull-right; */
     background: #03a9f4;
     color: #fff;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
-.message-feed.right .mf-content {
+
+.message-feed .sent .mf-content .mf-date{
+    display: block;
+    color: #B3B3B3;
+    margin-top: 7px;
+}
+/* .message-feed:not(.received) .mf-content {
+    background: #03a9f4;
+    color: #fff;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+} */
+.message-feed .received .mf-content {
     background: #eee;
 }
 .mf-content {
@@ -203,7 +215,15 @@ body {
     padding-top: 19px;
     cursor:pointer;
 }
-#ms-menu-trigger, .message-feed.right {
+.message-feed .sent {
+    margin-right: 15px;
+}
+
+.message-feed .received {
+    margin-left: 15px;
+}
+
+#ms-menu-trigger, .message-feed .sent {
     text-align: right;
 }
 

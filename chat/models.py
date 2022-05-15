@@ -25,7 +25,6 @@ class Message(models.Model):
         "Account",
         related_name="messages_sent",
         on_delete=models.CASCADE,
-        default="admin",
     )
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

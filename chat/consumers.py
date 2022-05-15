@@ -86,7 +86,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.handle_previous_message_request(data)
         else:
             message = data["message"]
-            message["author"] = "admin"
+            print(data)
+            message["author"] = message["author"]
             message["chats"] = message["chatID"]
             account = await sync_to_async(get_object_or_404)(
                 Account, pk=message["author"]

@@ -10,6 +10,7 @@ import thunk from "redux-thunk";
 
 import authReducer from "../redux-store/reducers/authReducer";
 import messageReducer from "../redux-store/reducers/messageReducer";
+import chatReducer from "../redux-store/reducers/chatReducer";
 import * as ReactDOM from "react-dom/client";
 import App from "./App";
 
@@ -23,13 +24,13 @@ const composeEnhancers =
     compose;
 
 export const store = createStore(
-    authReducer,
-    // combineReducers({
-    //     auth: authReducer,
-    //     // nav: navReducer,
-    //     // message: messageReducer,
-    //     // chat: chatReducer,
-    // }),
+    // authReducer,
+    combineReducers({
+        auth: authReducer,
+        //     // nav: navReducer,
+        //     // message: messageReducer,
+        chat: chatReducer,
+    }),
     composeEnhancers(applyMiddleware(thunk))
 );
 

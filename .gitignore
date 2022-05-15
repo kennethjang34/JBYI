@@ -9,3 +9,4 @@ __pycache__
 **/**/.parcel-cache
 **/**/**/__pycache__
 chat/api/__pycache__
+db.sqlite3

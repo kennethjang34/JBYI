@@ -2,7 +2,7 @@ import React from "react";
 import webSocketServer from "../websocket";
 import { connect } from "react-redux";
 import * as authActions from "../redux-store/actions/authActions";
-import * as messageActions from "../redux-store/actions/messageActions";
+import * as messageActions from "../redux-store/actions/chatActions";
 import ChatRoom from "./ChatRoom";
 import ChatApp from "./ChatApp";
 import SidePanel from "./SidePanel";

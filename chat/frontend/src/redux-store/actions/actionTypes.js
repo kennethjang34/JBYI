@@ -5,4 +5,5 @@ export const LOGIN_START = "LOGIN_START";
 export const LOGOUT = "AUTH_SUCCESS";
 
 export const ADD_MESSAGE = "ADD_MESSAGE";
-export const LOAD_MESSAGE = "LOAD_MESSAGE";
+export const LOAD_MESSAGES = "LOAD_MESSAGE";
+export const SELECT_CHAT = "SELECT_CHAT";

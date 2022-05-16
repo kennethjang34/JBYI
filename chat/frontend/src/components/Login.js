@@ -20,11 +20,12 @@ import {
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { loginForm: true, keepMeSignedIn: true };
+        this.state = { authType: "login", keepMeSignedIn: true };
     }
     authHandler = (event) => {
         event.preventDefault();
-        if (this.state.loginForm) {
+
+        if (this.state.authType === "login") {
             this.props.login(
                 event.target.usernameLogin.value,
                 event.target.password.value
@@ -41,12 +42,13 @@ class Login extends React.Component {
     };
 
     handleKeepMeSignedIn = (event) => {
-        this.setState({ keepMeSignedIn: event.target.value });
+        this.setState({ keepMeSignedIn: !keepMeSignedIn });
     };
 
     changeFormat = (event) => {
+        console.log(event.target.value);
         this.setState({
-            loginForm: event.target.value,
+            authType: event.target.value,
         });
     };
 
@@ -59,9 +61,9 @@ class Login extends React.Component {
                         type="radio"
                         name="tab"
                         className="sign-in"
-                        value={true}
+                        value={"login"}
                         defaultChecked={true}
-                        readOnly
+                        onClick={this.changeFormat}
                     />
                     <label htmlFor="tab-1" className="tab">
                         Sign In
@@ -71,6 +73,8 @@ class Login extends React.Component {
                         type="radio"
                         name="tab"
                         className="sign-up"
+                        value={"signup"}
+                        onClick={this.changeFormat}
                     />
                     <label htmlFor="tab-2" className="tab">
                         Sign Up

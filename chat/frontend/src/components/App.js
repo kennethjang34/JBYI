@@ -8,6 +8,8 @@ import ChatApp from "./ChatApp";
 import SidePanel from "./SidePanel";
 import { checkAuthAction } from "../redux-store/actions/authActions";
 import React from "react";
+import { useLocation } from "react-router-dom";
+
 import {
     Route,
     BrowserRouter,
@@ -16,37 +18,44 @@ import {
     Routes,
     Navigate,
 } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Login from "./Login";
+
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.props.checkAuth();
+        let previous_url = window.location.pathname;
+        previous_url = previous_url.split("/chat/").pop();
+        if (previous_url === "/login") {
+            previous_url = "/";
+        }
+        this.state = { previous: previous_url };
     }
 
-    BaseRouter = (props) => {
+    BodyComponent = (props) => {
+        const location = useLocation();
+        if (this.props.currentUser) {
+            return <ChatApp />;
+        } else {
+            return <Navigate to="/login" replace state={{ from: location }} />;
+        }
+    };
+
+    render = () => {
+        console.log(this.props.currentUser);
         return (
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route
                         path="/chat/:chatID/"
-                        element={
-                            this.props.currentUser ? (
-                                <ChatApp />
-                            ) : (
-                                <Navigate to="/login" />
-                            )
-                        }
+                        element={<this.BodyComponent />}
                     />
                 </Routes>
             </BrowserRouter>
         );
     };
-
-    render() {
-        // return <ChatApp />;
-        return <this.BaseRouter />;
-    }
 }
 
 const mapStateToProps = (state) => {
@@ -62,4 +71,5 @@ const mapDispatchToProps = (dispatch) => {
         checkAuth: () => dispatch(authActions.checkAuthAction),
     };
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(App);

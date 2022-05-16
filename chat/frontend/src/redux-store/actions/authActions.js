@@ -29,9 +29,9 @@ export const loginFail = (error) => {
 export const logoutAction = (dispatch, getState) => {
     localStorage.removeItem("token");
     //in localStorage, only username field of the user account object available
-    localStorage.removeItem("username");
+    localStorage.removeItem("currentUser");
     localStorage.removeItem("expirationDate");
-    return { type: actionTypes.LOGOUT };
+    dispatch({ type: actionTypes.LOGOUT });
 };
 
 //needs to save the state in local storage
@@ -59,7 +59,7 @@ export const loginAction = (username, password) => {
                     currentUser: username,
                     token: token,
                 });
-                dispatch(setLogOutTimer(3600 * 100));
+                dispatch(setLogOutTimer(3600 * 1000));
             });
     };
 };
@@ -88,8 +88,8 @@ export const signUpAction = (username, email, password1, password2) => {
                 localStorage.setItem("token", token);
                 localStorage.setItem("username", username);
                 localStorage.setItem("expirationDate", expirationDate);
-                dispatch(authSuccess(username, token));
-                dispatch(checkAuthTimeout(3600));
+                dispatch(loginSuccess(username, token));
+                dispatch(setLogOutTimer(3600 * 1000));
             })
             .catch((err) => {
                 dispatch(loginFail(err));
@@ -115,7 +115,9 @@ export const checkAuthAction = (dispatch, getState) => {
         if (expirationTime <= new Date()) {
             dispatch(logoutAction);
         } else {
-            dispatch(setLogOutTimer(new Date() - expirationTime));
+            dispatch(
+                setLogOutTimer(expirationTime.getTime() - new Date().getTime())
+            );
         }
     }
 };

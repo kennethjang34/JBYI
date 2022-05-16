@@ -31,7 +31,6 @@ class Login extends React.Component {
                 event.target.password.value
             );
         } else {
-            console.log("???");
             this.props.signup(
                 event.target.usernameSignup.value,
                 event.target.email.value,
@@ -52,7 +51,7 @@ class Login extends React.Component {
         });
     };
 
-    render = () => {
+    AuthForm = (props) => {
         return (
             <div className="login-wrap">
                 <div className="login-html">
@@ -190,6 +189,19 @@ class Login extends React.Component {
                         </div>
                     </form>
                 </div>
+            </div>
+        );
+    };
+
+    render = () => {
+        console.log(this.props.currentUser);
+        return (
+            <div>
+                {this.props.currentUser ? (
+                    <Navigate replace to="/chat/abc" />
+                ) : (
+                    <this.AuthForm />
+                )}
             </div>
         );
     };

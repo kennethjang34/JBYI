@@ -16,7 +16,7 @@
         "react": "*",
         "react-dom": "*",
         "react-redux": "*",
-        "react-router-dom": "*",
+        "react-router-dom": "^6.3.0",
         "redux": "*",
         "redux-devtools-extension": "*",
         "redux-thunk": "*",

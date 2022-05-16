@@ -5,6 +5,7 @@ import * as authActions from "../redux-store/actions/authActions";
 import * as messageActions from "../redux-store/actions/chatActions";
 import ChatRoom from "./ChatRoom";
 import SidePanel from "./SidePanel";
+
 class ChatApp extends React.Component {
     constructor(props) {
         super(props);
@@ -17,6 +18,9 @@ class ChatApp extends React.Component {
             <div>
                 {/* <TopPanel currentUser={currentUser} /> */}
                 {/* <SidePanel /> */}
+                <div>
+                    <button onClick={this.props.logout}>logout</button>
+                </div>
                 <ChatRoom chatID={this.props.selected} />
             </div>
         );
@@ -35,6 +39,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         checkAuth: () => dispatch(authActions.checkAuthAction),
+        logout: () => {
+            // navigate.push("/login");
+            dispatch(authActions.logoutAction);
+        },
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ChatApp);

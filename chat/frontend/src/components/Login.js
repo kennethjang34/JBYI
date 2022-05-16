@@ -8,6 +8,9 @@ import ChatApp from "./ChatApp";
 import SidePanel from "./SidePanel";
 import { checkAuthAction } from "../redux-store/actions/authActions";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+// const navigate = useNavigate();
+
 import {
     Route,
     BrowserRouter,
@@ -24,7 +27,6 @@ class Login extends React.Component {
     }
     authHandler = (event) => {
         event.preventDefault();
-
         if (this.state.authType === "login") {
             this.props.login(
                 event.target.usernameLogin.value,
@@ -198,7 +200,11 @@ class Login extends React.Component {
         return (
             <div>
                 {this.props.currentUser ? (
-                    <Navigate replace to="/chat/abc" />
+                    this.props.location ? (
+                        <Navigate replace to={this.props.location} />
+                    ) : (
+                        <Navigate replace to="/" />
+                    )
                 ) : (
                     <this.AuthForm />
                 )}
@@ -209,20 +215,20 @@ class Login extends React.Component {
 const mapStateToProps = (state) => {
     return {
         currentUser: state.auth.currentUser,
-        //state.chat.chats: list of chats. Each chat contains messges belonging to that chat room
-        // chats: state.chat.chats,
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        login: (userName, password) =>
-            dispatch(authActions.loginAction(userName, password)),
+        login: (userName, password) => {
+            dispatch(authActions.loginAction(userName, password));
+        },
         // logout: () => dispatch(authActions.logout()),
-        signup: (username, email, password1, password2) =>
+        signup: (username, email, password1, password2) => {
             dispatch(
                 authActions.signUpAction(username, email, password1, password2)
-            ),
+            );
+        },
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -28,7 +28,7 @@ const login_fail = (state, action) => {
     };
 };
 
-const login_start = (state, action) => {
+const auth_start = (state, action) => {
     return {
         ...state,
         error: null,
@@ -46,14 +46,14 @@ const logout = (state, action) => {
 
 export default reducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.LOGIN_START:
-            return login_start(action, state);
-        case actionTypes.AUTH_SUCCESS:
-            return login_success(action, state);
-        case actionTypes.AUTH_FAIL:
-            return login_fail(action, state);
+        case actionTypes.AUTH_START:
+            return auth_start(state, action);
+        case actionTypes.LOGIN_SUCCESS:
+            return login_success(state, action);
+        case actionTypes.LOGIN_FAIL:
+            return login_fail(state, action);
         case actionTypes.LOGOUT:
-            return logout(action, state);
+            return logout(state, action);
         default:
             return state;
     }

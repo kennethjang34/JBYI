@@ -48,7 +48,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def handle_previous_message_request(self, data):
         # chat_room: must be an instance of Chat model
         chat_room = await ChatConsumer.get_chat_room(data["chatID"])
-        messages = chat_room.messages
+        # Later change the implementation so as to limit the number of messages to be sent at a time
+        # messages = chat_room.messages.order_by("-timestamp").all()[:30]
+        messages = chat_room.messages.order_by("-timestamp").all()
         json_messages = await ChatConsumer.messages_to_json(messages)
         await self.send_previous_messages(data["chatID"], json_messages)
 
@@ -80,13 +82,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # new message arrives at the server. called once only for each new message
     async def receive(self, text_data):
         data = json.loads(text_data)
-        # print(data)
         request = data["request"]
         if request == "previous_messages":
             await self.handle_previous_message_request(data)
         else:
             message = data["message"]
-            print(data)
             message["author"] = message["author"]
             message["chats"] = message["chatID"]
             account = await sync_to_async(get_object_or_404)(
@@ -98,13 +98,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 chats = await sync_to_async(chat_objs.filter)(pk__in=message["chatID"])
             else:
                 chats = await sync_to_async(chat_objs.filter)(pk=message["chatID"])
+
             messageObj = await sync_to_async(Message.objects.create)(
                 author=account, content=message["content"]
             )
-
-            # for chat in chats:
-            #     await sync_to_async(chat.messages.add)(messageObj)
-
+            message["timestamp"] = messageObj.timestamp.__str__()
             await sync_to_async(messageObj.chats.set)(chats)
             await self.send_new_message(chatID=message["chatID"], message=message)
 

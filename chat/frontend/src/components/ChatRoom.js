@@ -25,8 +25,9 @@ class ChatRoom extends React.Component {
                 request: "previous_messages",
                 chatID: chatID,
             });
+        } else {
+            socketServerInstance.connect(chatID);
         }
-        socketServerInstance.connect(chatID);
         setTimeout(() => {
             if (socketServerInstance.isConnectionMade(chatID)) {
                 console.log(`Connectionto chat: ${chatID} successfully made`);

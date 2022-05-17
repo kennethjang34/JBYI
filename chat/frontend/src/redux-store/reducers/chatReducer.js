@@ -5,7 +5,7 @@ const initialState = {
     chats: localStorage.chats ? localStorage.chats : {},
     //currenetUser is user account object of django (Not User model)
     currentUser: localStorage.currentUser ? localStorage.currentUser : null,
-    selected: "abc",
+    selected: null,
     //While waiting for response from the backend, shows that circle thingy
     loading: false,
     error: false,
@@ -21,24 +21,40 @@ const addMessage = (state, action) => {
 
 const loadMessages = (state, action) => {
     const chats = { ...state.chats };
-    chats[action.chatID] = {
-        messages: action.messages ? action.messages.reverse() : [],
-    };
+    chats[action.chatID].messages = action.messages
+        ? action.messages.reverse()
+        : [];
     return { ...state, chats: { ...chats } };
 };
 
 const selectChat = (state, action) => {
-    return { ...state, selected: action.selectedChatID };
+    return { ...state, selected: action.chatID };
+};
+
+const loadChats = (state, action) => {
+    //action.chats: list of JSON object chats
+    return { ...state, chats: action.chats };
+};
+
+//todo
+const deleteChats = (state, action) => {
+    return { ...state };
 };
 
 export default reducer = (state = initialState, action) => {
     switch (action.type) {
+        case actionTypes.LOAD_CHATS:
+            return loadChats(state, action);
+
+        case actionTypes.DELETE_CHATS:
+            return deleteChats(state, action);
+        case actionTypes.SELECT_CHAT:
+            return selectChat(state, action);
         case actionTypes.LOAD_MESSAGES:
             return loadMessages(state, action);
         case actionTypes.ADD_MESSAGE:
             return addMessage(state, action);
-        case actionTypes.SELECT_CHAT:
-            return selectChat(state, action);
+
         default:
             return state;
     }

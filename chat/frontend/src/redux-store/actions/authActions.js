@@ -59,6 +59,7 @@ export const loginAction = (username, password) => {
                     currentUser: username,
                     token: token,
                 });
+
                 dispatch(setLogOutTimer(3600 * 1000));
             });
     };

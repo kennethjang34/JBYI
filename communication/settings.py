@@ -17,7 +17,7 @@ ALLOWED_HOSTS = []
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:1234",
 ]
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = ("https://localhost:1234",)
 # CORS_ORIGIN_WHITELIST = ("https://localhost:8000",)
 

@@ -2,9 +2,10 @@ import React from "react";
 import webSocketServer from "../websocket";
 import { connect } from "react-redux";
 import * as authActions from "../redux-store/actions/authActions";
-import * as messageActions from "../redux-store/actions/chatActions";
+import * as chatActions from "../redux-store/actions/chatActions";
 import ChatRoom from "./ChatRoom";
 import SidePanel from "./SidePanel";
+import { Outlet } from "react-router-dom";
 
 class ChatApp extends React.Component {
     constructor(props) {
@@ -13,15 +14,22 @@ class ChatApp extends React.Component {
         // props.checkAuth();
     }
 
+    componentDidMount = () => {
+        this.props.getChats(this.props.currentUser);
+    };
+
     render() {
         return (
             <div>
-                {/* <TopPanel currentUser={currentUser} /> */}
-                {/* <SidePanel /> */}
+                <SidePanel />
                 <div>
                     <button onClick={this.props.logout}>logout</button>
                 </div>
-                <ChatRoom chatID={this.props.selected} />
+                {this.props.selected ? (
+                    <ChatRoom chatID={this.props.selected} />
+                ) : (
+                    <Outlet />
+                )}
             </div>
         );
     }
@@ -43,6 +51,8 @@ const mapDispatchToProps = (dispatch) => {
             // navigate.push("/login");
             dispatch(authActions.logoutAction);
         },
+        getChats: (currentUser) =>
+            dispatch(chatActions.getChatsAction(currentUser)),
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ChatApp);

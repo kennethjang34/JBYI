@@ -1,4 +1,8 @@
 import * as actionTypes from "../actions/actionTypes";
+import axios from "axios";
+
+// axios.defaults.baseURL = "http://127.0.0.1:8000/chat/api/";
+
 export const addMessage = (chatID, message) => {
     return {
         type: actionTypes.ADD_MESSAGE,
@@ -15,9 +19,48 @@ export const loadMessages = (chatID, messages) => {
     };
 };
 
+export const loadChats = (chats) => {
+    const trimmedChats = {};
+    chats.map((chat) => {
+        trimmedChats[chat.chatID] = chat;
+    });
+    trimmedChats;
+
+    return {
+        type: actionTypes.LOAD_CHATS,
+        chats: trimmedChats,
+    };
+};
+
 export const selectChat = (chatID) => {
     return {
         type: actionTypes.SELECT_CHAT,
         chatID: chatID,
+    };
+};
+
+export const chatLoadError = (message) => {
+    return {
+        type: actionTypes.CHAT_LOAD_ERROR,
+    };
+};
+
+export const getChatsAction = (currentUser) => {
+    return (dispatch) => {
+        axios
+            .get("http://127.0.0.1:8000/chat/api/", {
+                headers: {
+                    Authorization: `Token ${localStorage.getItem("token")}`,
+                },
+                data: {
+                    username: currentUser,
+                },
+            })
+            .then((response) => {
+                dispatch(loadChats(response.data));
+            })
+            .catch((err) => {
+                dispatch(chatLoadError(err.message));
+            });
     };
 };

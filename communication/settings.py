@@ -134,7 +134,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S.%fZ",
     "DEFAULT_PERMISSION_CLASSES": (

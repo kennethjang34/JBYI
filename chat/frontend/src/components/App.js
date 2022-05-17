@@ -42,12 +42,24 @@ class App extends React.Component {
         }
     };
 
+    LoginRouteComponent = (props) => {
+        const location = useLocation();
+        return <div>{<Login from={location.state.from} />}</div>;
+    };
+
     render = () => {
         console.log(this.props.currentUser);
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/login" element={<Login />} />
+                    {/* <Route>
+                        <this.LoginRouteComponent />
+                    </Route> */}
+                    <Route
+                        path="/login"
+                        element={<this.LoginRouteComponent />}
+                        // element={<Login from={this.state.from} />}
+                    />
                     <Route
                         path="/chat/:chatID/"
                         element={<this.BodyComponent />}

@@ -15,7 +15,7 @@ export const loginSuccess = (username, token) => {
     return {
         type: actionTypes.LOGIN_SUCCESS,
         token: token,
-        username: username,
+        currentUser: username,
     };
 };
 
@@ -86,7 +86,7 @@ export const signUpAction = (username, email, password1, password2) => {
                     new Date().getTime() + 3600 * 1000
                 );
                 localStorage.setItem("token", token);
-                localStorage.setItem("username", username);
+                localStorage.setItem("currentUser", username);
                 localStorage.setItem("expirationDate", expirationDate);
                 dispatch(loginSuccess(username, token));
                 dispatch(setLogOutTimer(3600 * 1000));

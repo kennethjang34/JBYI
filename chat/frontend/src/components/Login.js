@@ -200,8 +200,8 @@ class Login extends React.Component {
         return (
             <div>
                 {this.props.currentUser ? (
-                    this.props.location ? (
-                        <Navigate replace to={this.props.location} />
+                    this.props.from ? (
+                        <Navigate replace to={this.props.from} />
                     ) : (
                         <Navigate replace to="/" />
                     )

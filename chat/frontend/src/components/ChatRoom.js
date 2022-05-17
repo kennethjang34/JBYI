@@ -52,9 +52,9 @@ class ChatRoom extends React.Component {
             messages: [],
             input: "",
         };
-        this.state.path = window.location.pathname;
-        let chatID = this.state.path.split("/chat/").pop();
-        this.buildConnection(chatID);
+        // this.state.path = window.location.pathname;
+        // let chatID = this.state.path.split("/chat/").pop();
+        this.buildConnection(props.chatID);
     }
 
     // componentDidMount() {
@@ -71,7 +71,8 @@ class ChatRoom extends React.Component {
             //This needs to be changed
             content: this.state.input,
             //Planning to change it to a list
-            chatID: window.location.pathname.split("/chat/").pop(),
+            chatID: this.props.chatID,
+            // chatID: window.location.pathname.split("/chat/").pop(),
             // timestamp: new Date().getDate() / 1000,
         };
         serverInstance.sendMessage(message.chatID, {
@@ -212,8 +213,8 @@ class ChatRoom extends React.Component {
     }
 
     renderMessages = (messages) => {
-        console.log(this.props.currentUser);
         const messages_rendered = messages.map((message, index) => {
+            console.log(message);
             return (
                 <li className="message-feed" key={index}>
                     <div

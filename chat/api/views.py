@@ -22,12 +22,17 @@ def get_user_account(username):
     return None
 
 
+# maybe not needed
 def get_chat_rooms(username):
     # queryset = Chat.objects.all()
     if username is not None:
         account = get_user_account(username)
         return account.chats.all()
     return None
+
+
+def get_user_account(user):
+    return get_object_or_404(Account, pk=user.username)
 
 
 # list all chat rooms of this user if there is any. For a particular chat room view, use ChatRetrieve
@@ -37,9 +42,9 @@ class ChatList(ListAPIView):
     serializer_class = ChatSerializer
 
     def get_queryset(self):
-        # queryset = Chat.objects.all()
-        username = self.request.query_params.get("username", None)
-        return get_chat_rooms(username)
+        print(get_user_account(self.request.user).chats.all())
+        return get_user_account(self.request.user).chats.all()
+        # return get_chat_rooms(username)
 
     # def get(self, request, *args, **kwargs):
     #     return self.list(request, *args, **kwargs)

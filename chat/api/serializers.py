@@ -11,7 +11,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ("user", "following", "followers", "timestamp")
+        fields = ("userID", "user", "following", "followers", "timestamp")
 
 
 class ChatSerializer(serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ("participants", "messages", "timestamp")
+        fields = ("chatID", "participants", "messages", "timestamp")
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -31,4 +31,4 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ("content", "chats", "author", "timestamp")
+        fields = ("messageID", "content", "chats", "author", "timestamp")

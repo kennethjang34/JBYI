@@ -227,3 +227,4 @@ body {
     text-align: right;
 }
 
+button.link { background:none; border:none; }

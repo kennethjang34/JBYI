@@ -2,11 +2,8 @@ import React from "react";
 import webSocketServer from "../websocket";
 import { connect } from "react-redux";
 import * as authActions from "../redux-store/actions/authActions";
-import * as messageActions from "../redux-store/actions/chatActions";
-import ChatRoom from "./ChatRoom";
 import ChatApp from "./ChatApp";
-import SidePanel from "./SidePanel";
-import { checkAuthAction } from "../redux-store/actions/authActions";
+
 import React from "react";
 import { useLocation } from "react-router-dom";
 
@@ -48,7 +45,6 @@ class App extends React.Component {
     };
 
     render = () => {
-        console.log(this.props.currentUser);
         return (
             <BrowserRouter>
                 <Routes>
@@ -61,7 +57,8 @@ class App extends React.Component {
                         // element={<Login from={this.state.from} />}
                     />
                     <Route
-                        path="/chat/:chatID/"
+                        path="/chat"
+                        // path="/chat/:chatID/"
                         element={<this.BodyComponent />}
                     />
                 </Routes>

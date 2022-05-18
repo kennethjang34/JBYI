@@ -57,13 +57,6 @@ class ChatRoom extends React.Component {
         this.buildConnection(props.chatID);
     }
 
-    // componentDidMount() {
-    //     this.setState({
-    //         //input: text input from the user for a message
-    //         input: "",
-    //     });
-    // }
-
     sendMessage = (event) => {
         event.preventDefault();
         const message = {
@@ -75,10 +68,14 @@ class ChatRoom extends React.Component {
             // chatID: window.location.pathname.split("/chat/").pop(),
             // timestamp: new Date().getDate() / 1000,
         };
-        serverInstance.sendMessage(message.chatID, {
-            request: "new_message",
-            message: message,
-        });
+        if (
+            serverInstance.sendMessage(message.chatID, {
+                request: "new_message",
+                message: message,
+            })
+        ) {
+            // this.props.addMessage(message.chatID, message);
+        }
         this.setState({
             input: "",
         });
@@ -214,7 +211,6 @@ class ChatRoom extends React.Component {
 
     renderMessages = (messages) => {
         const messages_rendered = messages.map((message, index) => {
-            console.log(message);
             return (
                 <li className="message-feed" key={index}>
                     <div
@@ -245,10 +241,12 @@ class ChatRoom extends React.Component {
 
     render = () => {
         let messages = [];
-        if (this.props.chat && this.props.chat.messages) {
-            messages = this.props.chat.messages;
+        if (
+            this.props.chats[this.props.chatID] &&
+            this.props.chats[this.props.chatID].messages
+        ) {
+            messages = this.props.chats[this.props.chatID].messages;
         }
-        console.log(this.props.chat);
         return (
             <div>
                 <this.TopPanel />
@@ -265,8 +263,8 @@ class ChatRoom extends React.Component {
                 </div>
                 <div
                     style={{ float: "left", clear: "both" }}
-                    ref={(msg) => {
-                        this.lastMessage = msg;
+                    ref={(message) => {
+                        this.lastMessage = message;
                     }}
                 ></div>
                 <div className="pull-left">
@@ -291,11 +289,7 @@ class ChatRoom extends React.Component {
                             className="fa fa-paperclip attachment"
                             aria-hidden="true"
                         ></i>
-                        <button
-                            className="submit"
-                            // onClick={this.sendMessage}
-                            // value={this.state.input}
-                        >
+                        <button className="submit">
                             <i className="fa fa-paper-plane-o"></i>
                         </button>
                     </form>
@@ -308,18 +302,7 @@ class ChatRoom extends React.Component {
 //Adding redux state as props to this component
 const mapStateToProps = (state, ownProps) => {
     return {
-        // currentUser: state.currentUser,
-        //messages need to be retreieved dynamically for each rendering
-        // unlike chatID. Redux suits
-        // messages: state.chats[ownProps.chatID].messages,
-
-        //************** */
-        //only for now!!
-        chat: state.chat.chats[ownProps.chatID],
-
-        // messages: state.chat.chats[ownProps.chatID]
-        //     ? state.chat.chats[ownProps.chatID].messages
-        //     : [],
+        chats: state.chat.chats,
 
         currentUser: state.auth.currentUser,
     };

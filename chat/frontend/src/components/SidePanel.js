@@ -21,10 +21,8 @@ class SidePanel extends React.Component {
 
     renderChats = () => {
         const chats = this.props.chats;
-        console.log(chats);
         const chats_rendered = Object.keys(chats).map((chatID, index) => {
             const chat = chats[chatID];
-            console.log(chat);
             const usernames = [
                 ...this.getUserNamesTrimmed(chat["participants"]),
             ];
@@ -48,9 +46,15 @@ class SidePanel extends React.Component {
                             {/* <button className="list-group-item-heading"> */}
                             {usernames}
                         </button>
-                        <small className="list-group-item-text c-gray">
-                            {chat && chat.messages && chat.messages.reverse()
-                                ? chat.messages.reverse()[0]
+                        <small
+                            className="list-group-item-text c-gray"
+                            key={chatID}
+                        >
+                            {chat &&
+                            chat.messages &&
+                            chat.messages.length > 0 &&
+                            chat.messages.reverse()
+                                ? chat.messages.reverse()[0].content
                                 : ""}
                         </small>
                     </div>
@@ -113,41 +117,6 @@ class SidePanel extends React.Component {
 
                         <div className="list-group lg-alt">
                             {this.renderChats()}
-                            {/* <a className="list-group-item media" href="">
-                                <div className="lv-avatar pull-left">
-                                    <img
-                                        src="https://bootdey.com/img/Content/avatar/avatar2.png"
-                                        alt=""
-                                        className="img-avatar"
-                                    />
-                                </div>
-                                <div className="media-body">
-                                    <div className="list-group-item-heading">
-                                        James Anderson
-                                    </div>
-                                    <small className="list-group-item-text c-gray">
-                                        Hungry
-                                    </small>
-                                </div>
-                            </a> */}
-
-                            {/* <a className="list-group-item media" href="">
-                                <div className="lv-avatar pull-left">
-                                    <img
-                                        src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                                        alt=""
-                                        className="img-avatar"
-                                    />
-                                </div>
-                                <div className="media-body">
-                                    <div className="list-group-item-heading">
-                                        Kane Williams
-                                    </div>
-                                    <small className="list-group-item-text c-gray">
-                                        Hungry
-                                    </small>
-                                </div>
-                            </a> */}
                         </div>
                     </div>
                 </div>

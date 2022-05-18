@@ -95,8 +95,10 @@ class WebSocketServer {
             console.log(JSON.stringify({ ...data }));
             console.log({ ...data });
             webSocket.send(JSON.stringify({ ...data }));
+            return true;
         } catch (error) {
             console.log(error.message);
+            return false;
         }
     };
 

@@ -1,4 +1,5 @@
 import React from "react";
+import Layout from "./Layout";
 import { Provider } from "react-redux";
 import {
     legacy_createStore as createStore,

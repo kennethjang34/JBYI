@@ -1,3 +1,44 @@
+#left {
+    width : 30%; height : 100vh ;
+    left:0;
+}
+#toppanel{
+    max-height: calc(100% - 93px);
+    width: 70%;
+    float: right;
+    overflow: hidden;
+    position: relative;
+}
+.chat-room {
+    max-height: calc(100% - 93px);
+    float: right;
+  width: 70%;
+  height: 715px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+/* height: 715px;
+
+  min-height: calc(100% - 93px);
+  max-height: calc(100% - 93px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%; */
+#sidepanel{
+    float: left;
+    border: none;
+    width: 50%;
+    background: #2196f3;
+    color: #123;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-family: "proxima-nova", "Source Sans Pro", sans-serif;
+    margin-bottom: 6px;
+    border-radius: 3px;
+    padding: 7px;
+    width: calc(100% - 43px);
+  }
 body {
     font-family: Roboto,sans-serif;
     font-size: 13px;
@@ -7,13 +48,29 @@ body {
 }
 
 #messages-main {
-    position: relative;
+    /* position: relative;
     margin: 0 auto;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    background-color: #fff */
+    float: left;
+    border: none;
+    width: 50%;
+    background: #2196f3;
+    color: #123;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-family: "proxima-nova", "Source Sans Pro", sans-serif;
+    margin-bottom: 6px;
+    border-radius: 3px;
+    padding: 7px;
+    width: calc(100% - 43px);
 }
 #messages-main:after, #messages-main:before {
     content: " ";
     display: table;
+    background-color: #fff;
+    color: #000;
+
 }
 #messages-main .ms-menu {
     position: absolute;
@@ -227,4 +284,13 @@ body {
     text-align: right;
 }
 
+
 button.link { background:none; border:none; }
+
+
+.logoutButton {
+    position: absolute;
+    right: 0;
+    padding: 5px;
+    /* margin-right: 3px; */
+}

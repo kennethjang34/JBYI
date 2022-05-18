@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import * as chatActions from "../redux-store/actions/chatActions";
+import * as authActions from "../redux-store/actions/authActions";
 
 class SidePanel extends React.Component {
     getUserNamesTrimmed = (users) => {
@@ -66,7 +67,8 @@ class SidePanel extends React.Component {
 
     render = () => {
         return (
-            <div className="container bootstrap snippets bootdey">
+            <div id="sidepanel">
+                {/* //  <div className="container bootstrap snippets bootdey"> */}
                 <div className="tile tile-alt" id="messages-main">
                     <div className="ms-menu">
                         <div className="ms-user clearfix" id="profile">
@@ -78,6 +80,14 @@ class SidePanel extends React.Component {
                             <div>
                                 Signed in as <br />
                                 {this.props.currentUser}
+                                <button
+                                    className="logoutButton"
+                                    // href=""
+                                    type="text"
+                                    onClick={this.props.logout}
+                                >
+                                    LOGOUT
+                                </button>
                             </div>
                         </div>
 
@@ -135,6 +145,10 @@ const mapDispatchToProps = (dispatch) => {
     return {
         selectChat: (chatID) => {
             return dispatch(chatActions.selectChat(chatID));
+        },
+        logout: () => {
+            // navigate.push("/login");
+            dispatch(authActions.logoutAction);
         },
     };
 };

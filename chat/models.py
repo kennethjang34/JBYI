@@ -10,9 +10,12 @@ User = get_user_model()
 def pkgen():
     from base64 import b32encode
     from hashlib import sha1
-    from random import random
+    import string
+    import random
 
-    pk = b32encode(sha1(str(random()).encode("utf-8")).digest()).lower()[:6]
+    pk = "".join(random.choices(string.ascii_letters + string.digits, k=16))
+    print(pk)
+    # pk = b32encode(sha1(str(random()).encode("utf-8")).digest()).lower()[:6]
 
     return pk
 
@@ -58,7 +61,7 @@ class Chat(models.Model):
     chatID = models.CharField(max_length=20, primary_key=True, default=pkgen)
     participants = models.ManyToManyField(Account, related_name="chats")
     # messages sent to multiple chat rooms might exist
-    messages = models.ManyToManyField(Message, related_name="chats")
+    messages = models.ManyToManyField(Message, related_name="chats", blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

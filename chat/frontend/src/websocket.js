@@ -92,8 +92,8 @@ class WebSocketServer {
     sendMessage = (chatID, data) => {
         try {
             const webSocket = this.sockets[chatID].socket;
-            console.log(JSON.stringify({ ...data }));
-            console.log({ ...data });
+            // console.log(JSON.stringify({ ...data }));
+            // console.log({ ...data });
             webSocket.send(JSON.stringify({ ...data }));
             return true;
         } catch (error) {

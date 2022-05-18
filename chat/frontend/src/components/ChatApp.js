@@ -22,14 +22,13 @@ class ChatApp extends React.Component {
         return (
             <div>
                 <SidePanel />
-                <div>
-                    <button onClick={this.props.logout}>logout</button>
-                </div>
+                {/* <div className="right"> */}
                 {this.props.selected ? (
                     <ChatRoom chatID={this.props.selected} />
                 ) : (
                     <Outlet />
                 )}
+                {/* </div> */}
             </div>
         );
     }

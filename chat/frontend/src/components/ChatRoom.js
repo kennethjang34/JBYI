@@ -104,7 +104,7 @@ class ChatRoom extends React.Component {
 
     TopPanel = (props) => {
         return (
-            <div className="action-header clearfix">
+            <div id="toppanel">
                 <div className="visible-xs" id="ms-menu-trigger">
                     <i className="fa fa-bars"></i>
                 </div>
@@ -250,49 +250,50 @@ class ChatRoom extends React.Component {
         return (
             <div>
                 <this.TopPanel />
-
-                <div className="ms-body">
-                    {/* <div className="message-feed received">
+                <div className="chat-room">
+                    <div className="ms-body">
+                        {/* <div className="message-feed received">
                         <img
                             src="https://bootdey.com/img/Content/avatar/avatar2.png"
                             alt=""
                             className="img-avatar"
                         />
                     </div> */}
-                    <ul>{messages && this.renderMessages(messages)}</ul>
-                </div>
-                <div
-                    style={{ float: "left", clear: "both" }}
-                    ref={(message) => {
-                        this.lastMessage = message;
-                    }}
-                ></div>
-                <div className="pull-left">
-                    <img
-                        src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                        alt=""
-                        className="img-avatar"
-                    />
-                </div>
-
-                <div className="msb-reply">
-                    <form onSubmit={this.sendMessage}>
-                        <textarea
-                            placeholder="Enter message"
-                            onChange={this.changeCurrentInput}
-                            onKeyPress={this.keypress}
-                            key="mesage-input"
-                            value={this.state.input}
-                            // defaultValue={this.state.input}
+                        <ul>{messages && this.renderMessages(messages)}</ul>
+                    </div>
+                    <div
+                        style={{ float: "left", clear: "both" }}
+                        ref={(message) => {
+                            this.lastMessage = message;
+                        }}
+                    ></div>
+                    <div className="pull-left">
+                        <img
+                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                            alt=""
+                            className="img-avatar"
                         />
-                        <i
-                            className="fa fa-paperclip attachment"
-                            aria-hidden="true"
-                        ></i>
-                        <button className="submit">
-                            <i className="fa fa-paper-plane-o"></i>
-                        </button>
-                    </form>
+                    </div>
+
+                    <div className="msb-reply">
+                        <form onSubmit={this.sendMessage}>
+                            <textarea
+                                placeholder="Enter message"
+                                onChange={this.changeCurrentInput}
+                                onKeyPress={this.keypress}
+                                key="mesage-input"
+                                value={this.state.input}
+                                // defaultValue={this.state.input}
+                            />
+                            <i
+                                className="fa fa-paperclip attachment"
+                                aria-hidden="true"
+                            ></i>
+                            <button className="submit">
+                                <i className="fa fa-paper-plane-o"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         );

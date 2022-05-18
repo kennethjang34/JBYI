@@ -15,15 +15,16 @@ const addMessage = (state, action) => {
     const chat = state.chats[action.chatID];
     const messages = [...chat.messages, action.message];
     const chats = { ...state.chats };
-    chats[action.chatID] = { messages: messages };
+    chats[action.chatID].messages = messages;
     return { ...state, chats: chats };
 };
 
+//only for one room
 const loadMessages = (state, action) => {
     const chats = { ...state.chats };
-    chats[action.chatID].messages = action.messages
-        ? action.messages.reverse()
-        : [];
+    const chatID = action.chatID;
+    chats[chatID].messages = action.messages;
+
     return { ...state, chats: { ...chats } };
 };
 

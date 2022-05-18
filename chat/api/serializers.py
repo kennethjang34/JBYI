@@ -14,21 +14,23 @@ class AccountSerializer(serializers.ModelSerializer):
         fields = ("userID", "user", "following", "followers", "timestamp")
 
 
-class ChatSerializer(serializers.ModelSerializer):
-    participants = AccountSerializer(many=True)
-    timestamp = serializers.DateTimeField(
-        format="%Y-%m-%dT%H:%M:%S.%fZ", default=timezone.now()
-    )
-
-    class Meta:
-        model = Chat
-        fields = ("chatID", "participants", "messages", "timestamp")
-
-
 class MessageSerializer(serializers.ModelSerializer):
-    chats = ChatSerializer(many=True)
+    # chats = ChatSerializer(many=True)
+    chats = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     timestamp = serializers.DateTimeField(default=timezone.now())
 
     class Meta:
         model = Message
         fields = ("messageID", "content", "chats", "author", "timestamp")
+
+
+class ChatSerializer(serializers.ModelSerializer):
+    participants = AccountSerializer(many=True)
+    timestamp = serializers.DateTimeField(
+        format="%Y-%m-%dT%H:%M:%S.%fZ", default=timezone.now()
+    )
+    messages = MessageSerializer(many=True)
+
+    class Meta:
+        model = Chat
+        fields = ("chatID", "participants", "messages", "timestamp")

@@ -42,7 +42,6 @@ class ChatList(ListAPIView):
     serializer_class = ChatSerializer
 
     def get_queryset(self):
-        print(get_user_account(self.request.user).chats.all())
         return get_user_account(self.request.user).chats.all()
         # return get_chat_rooms(username)
 

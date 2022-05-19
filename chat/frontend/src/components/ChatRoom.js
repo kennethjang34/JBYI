@@ -16,6 +16,7 @@ class ChatRoom extends React.Component {
             messages: [],
             input: "",
         };
+
         // this.state.path = window.location.pathname;
         // let chatID = this.state.path.split("/chat/").pop();
         // this.buildConnection(props.chatID);
@@ -32,14 +33,11 @@ class ChatRoom extends React.Component {
             // chatID: window.location.pathname.split("/chat/").pop(),
             // timestamp: new Date().getDate() / 1000,
         };
-        if (
-            this.props.serverInstance.sendMessage(message.chatID, {
-                request: "new_message",
-                message: message,
-            })
-        ) {
-            // this.props.addMessage(message.chatID, message);
-        }
+        this.props.serverInstance.sendMessage(message.chatID, {
+            request: "new_message",
+            message: message,
+        });
+
         this.setState({
             input: "",
         });

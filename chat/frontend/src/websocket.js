@@ -50,54 +50,6 @@ export class WebSocketServer {
         }
     }
 
-    // connect = (userToken = null) => {
-    //     if (userToken === null) {
-    //         console.log("User must specify chat room ID");
-    //         return;
-    //     } else {
-    //         const url = `${baseURLForWebsocket}/${userToken}`;
-    //         // url = `ws://127.0.0.1:8000/ws/chat/${chatID}/`;
-    //         console.log(`Connection try. URL: ${url}`);
-    //         const socketInstance = new WebSocket(url);
-    //         socketInstance.chatID = userToken;
-    //         if (!this.sockets[userToken]) {
-    //             this.sockets[userToken] = {
-    //                 socket: socketInstance,
-    //                 previousMessagesHandler: undefined,
-    //                 newMessageHandler: undefined,
-    //             };
-    //         } else {
-    //             this.sockets[userToken].socket = socketInstance;
-    //         }
-    //     socketInstance.onopen = () => {
-    //         console.log(
-    //             `WebSocket connection successfully made. URL: ${url}`
-    //         );
-    //     };
-
-    //     socketInstance.onclose = () => {
-    //         if (this.sockets[socketInstance.chatID]) {
-    //             console.log(
-    //                 `WebSocket connection to: ${url} closed. reconnecting...`
-    //             );
-    //             this.connect(userToken);
-    //         } else {
-    //             console.log(
-    //                 `WebSocket connection to: ${url} successfully closed`
-    //             );
-    //         }
-    //     };
-
-    //     socketInstance.onerror = (event) => {
-    //         console.log(event.message);
-    //     };
-
-    //     socketInstance.onmessage = (event) => {
-    //         this.socketMessageHandler(event.data);
-    //     };
-    // }
-    // };
-
     isConnectionMade = () => {
         const webSocket = this.socket;
         if (webSocket && webSocket.readyState) {
@@ -121,8 +73,7 @@ export class WebSocketServer {
     sendMessage = (chatID, data) => {
         try {
             const webSocket = this.socket;
-            // console.log(JSON.stringify({ ...data }));
-            // console.log({ ...data });
+
             webSocket.send(JSON.stringify({ ...data, chatID: chatID }));
             return true;
         } catch (error) {
@@ -139,6 +90,7 @@ export class WebSocketServer {
                 const messages = parsedData.messages.map((jsonString) =>
                     JSON.parse(jsonString)
                 );
+
                 this.previousMessagesHandler(parsedData.chatID, messages);
                 break;
             case "new_message":

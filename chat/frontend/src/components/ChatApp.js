@@ -10,22 +10,24 @@ import { Outlet } from "react-router-dom";
 
 class ChatApp extends React.Component {
     buildConnection = (userToken) => {
-        const socketInstance = WebSocketServer.getServerInstance(userToken);
+        const serverInstance = WebSocketServer.getServerInstance(userToken);
 
         setTimeout(() => {
-            if (socketInstance.isConnectionMade()) {
+            if (serverInstance.isConnectionMade()) {
                 console.log(
                     `Connectionto chat: ${userToken} successfully made`
                 );
-                socketInstance.setMessageHandlers(
+                serverInstance.setMessageHandlers(
                     userToken,
                     this.props.loadMessages,
                     this.props.addMessage
                 );
-                // socketInstance.sendMessage(userToken, {
-                //     request: "previous_messages",
-                //     chatID: userToken,
-                // });
+                Object.keys(this.props.chats).map((chatID) => {
+                    serverInstance.sendMessage(chatID, {
+                        request: "previous_messages",
+                        chatID: chatID,
+                    });
+                });
             } else {
                 console.log("waiting for socket connection");
                 this.buildConnection(userToken);
@@ -77,10 +79,11 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         checkAuth: () => dispatch(authActions.checkAuthAction),
-        logout: () => {
-            // navigate.push("/login");
-            dispatch(authActions.logoutAction);
-        },
+        // logout: () => {
+        //     // navigate.push("/login");
+        //     dispatch(authActions.logoutAction);
+        //     dispatch(chatActions.selectChat(null));
+        // },
         getChats: (currentUser) =>
             dispatch(chatActions.getChatsAction(currentUser)),
         addMessage: (chatID, message) => {

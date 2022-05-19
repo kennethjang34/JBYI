@@ -14,7 +14,6 @@ def pkgen():
     import random
 
     pk = "".join(random.choices(string.ascii_letters + string.digits, k=16))
-    print(pk)
     # pk = b32encode(sha1(str(random()).encode("utf-8")).digest()).lower()[:6]
 
     return pk
@@ -38,7 +37,7 @@ class Message(models.Model):
 
 class Account(models.Model):
     userID = models.CharField(max_length=15, primary_key=True, default=pkgen)
-    user = models.ForeignKey(User, related_name="accounts", on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name="account", on_delete=models.CASCADE)
     following = models.ManyToManyField(
         "Account",
         related_name="followers",
@@ -54,7 +53,6 @@ class Account(models.Model):
         if created:
             account = Account.objects.create(userID=instance.username, user=instance)
             # no friends !
-            print(account)
 
 
 class Chat(models.Model):

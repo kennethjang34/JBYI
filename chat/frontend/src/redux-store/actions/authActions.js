@@ -45,7 +45,6 @@ export const loginAction = (username, password) => {
                 password: password,
             })
             .then((response) => {
-                console.log(response);
                 const token = response.data.key;
                 const expirationTime = new Date(
                     //1 hour permission

@@ -46,12 +46,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         return json_messages
 
+    @staticmethod
+    @database_sync_to_async
+    def get_messages_from_oldest(chat_room):
+        messages = chat_room.messages.order_by("-timestamp").all().reverse()
+
+        return messages
+
     async def handle_previous_message_request(self, data):
+
         # chat_room: must be an instance of Chat model
         chat_room = await ChatConsumer.get_chat_room(data["chatID"])
         # Later change the implementation so as to limit the number of messages to be sent at a time
-        # messages = chat_room.messages.order_by("-timestamp").all()[:30]
-        messages = chat_room.messages.order_by("-timestamp").all().reverse()
+        # messages = chat_room.messages.order_by("-timestamp").all().reverse()
+        messages = await ChatConsumer.get_messages_from_oldest(chat_room)
         json_messages = await ChatConsumer.messages_to_json(messages)
         await self.send_previous_messages(data["chatID"], json_messages)
 

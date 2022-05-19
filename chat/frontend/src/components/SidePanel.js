@@ -149,6 +149,7 @@ const mapDispatchToProps = (dispatch) => {
         logout: () => {
             // navigate.push("/login");
             dispatch(authActions.logoutAction);
+            dispatch(chatActions.selectChat(null));
         },
     };
 };

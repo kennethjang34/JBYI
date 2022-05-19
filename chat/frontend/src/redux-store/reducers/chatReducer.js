@@ -24,7 +24,7 @@ const loadMessages = (state, action) => {
     const chats = { ...state.chats };
     const chatID = action.chatID;
     chats[chatID].messages = action.messages;
-
+    new_state = { ...state, chats: { ...chats } };
     return { ...state, chats: { ...chats } };
 };
 

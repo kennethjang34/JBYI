@@ -4,48 +4,12 @@ import { connect } from "react-redux";
 import * as authActions from "../redux-store/actions/authActions";
 import * as messageActions from "../redux-store/actions/chatActions";
 import * as chatActions from "../redux-store/actions/chatActions";
-import serverInstance from "../websocket";
+import server from "../websocket";
 //The user authentication must be global. => redux
 //Chat component is react-based chat UI for each chat room. ChatID doesn't have to be global.
 //ChatID is an instance-specific prop
 //
 class ChatRoom extends React.Component {
-    buildConnection = (chatID) => {
-        if (
-            socketServerInstance.sockets[chatID] &&
-            socketServerInstance.sockets[chatID].socket
-        ) {
-            console.log(`Connectionto chat: ${chatID} already exists`);
-            socketServerInstance.setMessageHandlers(
-                chatID,
-                this.props.loadMessages,
-                this.props.addMessage
-            );
-            socketServerInstance.sendMessage(chatID, {
-                request: "previous_messages",
-                chatID: chatID,
-            });
-        } else {
-            socketServerInstance.connect(chatID);
-        }
-        setTimeout(() => {
-            if (socketServerInstance.isConnectionMade(chatID)) {
-                console.log(`Connectionto chat: ${chatID} successfully made`);
-                socketServerInstance.setMessageHandlers(
-                    chatID,
-                    this.props.loadMessages,
-                    this.props.addMessage
-                );
-                socketServerInstance.sendMessage(chatID, {
-                    request: "previous_messages",
-                    chatID: chatID,
-                });
-            } else {
-                console.log("waiting for socket connection");
-                this.buildConnection(chatID);
-            }
-        }, 200);
-    };
     constructor(props) {
         super(props);
         this.state = {
@@ -54,7 +18,7 @@ class ChatRoom extends React.Component {
         };
         // this.state.path = window.location.pathname;
         // let chatID = this.state.path.split("/chat/").pop();
-        this.buildConnection(props.chatID);
+        // this.buildConnection(props.chatID);
     }
 
     sendMessage = (event) => {
@@ -69,7 +33,7 @@ class ChatRoom extends React.Component {
             // timestamp: new Date().getDate() / 1000,
         };
         if (
-            serverInstance.sendMessage(message.chatID, {
+            this.props.serverInstance.sendMessage(message.chatID, {
                 request: "new_message",
                 message: message,
             })

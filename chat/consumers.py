@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
-
+from rest_framework.authtoken.models import Token
 from chat.api.views import get_chat_rooms
 from chat.api.serializers import *
 from .models import Message, Chat, Account
@@ -25,12 +25,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # ChatConsumer assumes the chat room has already been created
     @staticmethod
     async def get_chat_room(chatID):
-        # Chat.objects.get_or_create(
-        #     participants=self., defaults={"messages": [], "timestamp": datetime()}
-        # )
-        # list()
-        # chats = await database_sync_to_async(Chat.objects.all)()
-        # await database_sync_to_async(print)(chats)
+
         chat = await database_sync_to_async(get_object_or_404)(Chat, pk=chatID)
         return chat
 
@@ -60,20 +55,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
         json_messages = await ChatConsumer.messages_to_json(messages)
         await self.send_previous_messages(data["chatID"], json_messages)
 
+    @database_sync_to_async
+    def get_chats_with_token(self, token):
+        token = self.scope["url_route"]["kwargs"]["user_token"]
+        user = (Token.objects.get)(key=token).user
+        account = user.account
+        return list(account.chats.all())
+
     async def connect(self):
-        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = "chat_%s" % self.room_name
-        # Join room group
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        token = self.scope["url_route"]["kwargs"]["user_token"]
+        chats = await self.get_chats_with_token(token)
+        self.room_group_names = []
+        for chat in chats:
+            self.room_group_names.append(chat.chatID)
+            await self.channel_layer.group_add(chat.chatID, self.channel_name)
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        for room_group_name in self.room_group_names:
+            await self.channel_layer.group_discard(room_group_name, self.channel_name)
 
     async def send_new_message(self, chatID, message):
         # Send message to room group
         await self.channel_layer.group_send(
-            self.room_group_name,
+            chatID,
             {
                 "type": "chat_message_arrive",
                 "message": {
@@ -130,8 +135,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group (not from the frontend socket)
     async def chat_message_arrive(self, event):
-        # Send message to WebSocket
-        # await self.send(text_data=json.dumps({message}))
-        # event["message"] is assumed to be in json already
-        # just propagate
+
         await self.send(text_data=json.dumps(event["message"]))

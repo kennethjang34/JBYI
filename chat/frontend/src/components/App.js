@@ -1,5 +1,4 @@
 import React from "react";
-import webSocketServer from "../websocket";
 import { connect } from "react-redux";
 import * as authActions from "../redux-store/actions/authActions";
 import ChatApp from "./ChatApp";

@@ -4,15 +4,15 @@ import * as chatActions from "../redux-store/actions/chatActions";
 import * as authActions from "../redux-store/actions/authActions";
 
 class SidePanel extends React.Component {
-    getUserNamesTrimmed = (users) => {
-        const usernames = users.map((user, index) => {
-            if (index < users.length - 1) {
-                return user.userID + ", ";
+    getUserNamesTrimmed = (usernames) => {
+        const trimmed = usernames.map((user, index) => {
+            if (index < usernames.length - 1) {
+                return usernames[index] + ", ";
             } else {
-                return user.userID;
+                return usernames[index];
             }
         });
-        return usernames;
+        return trimmed;
     };
 
     chatSelectionHandler = (event) => {
@@ -24,6 +24,7 @@ class SidePanel extends React.Component {
         const chats = this.props.chats;
         const chats_rendered = Object.keys(chats).map((chatID, index) => {
             const chat = chats[chatID];
+            // console.log(chat["participants"]);
             const usernames = [
                 ...this.getUserNamesTrimmed(chat["participants"]),
             ];
@@ -91,6 +92,16 @@ class SidePanel extends React.Component {
                             </div>
                         </div>
 
+                        <div className="p-15">
+                            <button
+                                className="btn btn-primary btn-block"
+                                type="text"
+                                onClick={this.props.createChat}
+                            >
+                                New Chat
+                            </button>
+                        </div>
+
                         <div className="p-15" id="dropdown">
                             <div className="dropdown">
                                 <a
@@ -99,7 +110,7 @@ class SidePanel extends React.Component {
                                     data-toggle="dropdown"
                                     id="dropdown"
                                 >
-                                    New Chat <i className="caret m-l-5"></i>
+                                    Search ... <i className="caret m-l-5"></i>
                                 </a>
 
                                 <ul className="dropdown-menu dm-icon w-100">
@@ -150,6 +161,9 @@ const mapDispatchToProps = (dispatch) => {
             // navigate.push("/login");
             dispatch(authActions.logoutAction);
             dispatch(chatActions.selectChat(null));
+        },
+        createChat: (participants) => {
+            dispatch(chatActions.createChatAction(participants));
         },
     };
 };

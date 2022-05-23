@@ -37,6 +37,15 @@ const loadChats = (state, action) => {
     return { ...state, chats: action.chats };
 };
 
+const chatCreated = (state, action) => {
+    const chats = { ...state.chats };
+    chats[action.chatID] = {
+        messages: [],
+        participants: action.participants,
+    };
+    return { ...state, chats: { ...chats } };
+};
+
 //todo
 const deleteChats = (state, action) => {
     return { ...state };
@@ -46,7 +55,8 @@ export default reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.LOAD_CHATS:
             return loadChats(state, action);
-
+        case actionTypes.CHAT_CREATED:
+            return chatCreated(state, action);
         case actionTypes.DELETE_CHATS:
             return deleteChats(state, action);
         case actionTypes.SELECT_CHAT:

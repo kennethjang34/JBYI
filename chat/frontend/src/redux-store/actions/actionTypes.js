@@ -10,3 +10,4 @@ export const SELECT_CHAT = "SELECT_CHAT";
 export const CHAT_LOAD_ERROR = "CHAT_LOAD_ERROR";
 export const DELETE_CHATS = "DELETE_CHATS";
 export const LOAD_CHATS = "LOAD_CHATS";
+export const CHAT_CREATED = "CHAT_CREATED";

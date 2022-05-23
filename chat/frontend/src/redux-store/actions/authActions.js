@@ -63,6 +63,7 @@ export const loginAction = (username, password) => {
             });
     };
 };
+
 export const getBoundedFunction = (dispatch, action) => {
     return () => {
         dispatch(action);

@@ -21,11 +21,11 @@ export const loadMessages = (chatID, messages) => {
 
 export const loadChats = (chats) => {
     const trimmedChats = {};
+    console.log(chats);
     chats.map((chat) => {
         trimmedChats[chat.chatID] = chat;
     });
-    trimmedChats;
-
+    console.log(chats);
     return {
         type: actionTypes.LOAD_CHATS,
         chats: trimmedChats,
@@ -46,6 +46,7 @@ export const chatLoadError = (message) => {
 };
 
 export const getChatsAction = (currentUser) => {
+    console.log("getChatsCalled");
     return (dispatch) => {
         axios
             .get("http://127.0.0.1:8000/chat/api/", {
@@ -57,10 +58,42 @@ export const getChatsAction = (currentUser) => {
                 },
             })
             .then((response) => {
+                console.log(response.data);
                 dispatch(loadChats(response.data));
             })
             .catch((err) => {
                 dispatch(chatLoadError(err.message));
             });
+    };
+};
+
+export const createChatAction = (participants) => {
+    return (dispatch) => {
+        axios
+            .post(
+                "http://127.0.0.1:8000/chat/api/create/",
+                {
+                    // participants: ["admin", "jang"],
+                    // participants: participants,
+                },
+                {
+                    headers: {
+                        Authorization: `Token ${localStorage.getItem("token")}`,
+                    },
+                }
+            )
+            .then((response) => {
+                dispatch(chatCreated(response.data));
+            })
+            .catch((err) => {
+                dispatch(chatLoadError(err.message));
+            });
+    };
+};
+
+export const chatCreated = (chat) => {
+    return {
+        type: actionTypes.CHAT_CREATED,
+        chat: chat,
     };
 };

@@ -25,11 +25,14 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class ChatSerializer(serializers.ModelSerializer):
-    participants = AccountSerializer(many=True)
+    # participants = AccountSerializer(many=True)
+    participants = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Account.objects.all()
+    )
     timestamp = serializers.DateTimeField(
         format="%Y-%m-%dT%H:%M:%S.%fZ", default=timezone.now()
     )
-    messages = MessageSerializer(many=True)
+    messages = MessageSerializer(many=True, required=False)
 
     class Meta:
         model = Chat

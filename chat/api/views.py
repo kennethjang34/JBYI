@@ -57,10 +57,11 @@ class ChatCreate(CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ChatSerializer
 
-    def get_queryset(self):
-        username = self.request.query_params.get("username", None)
-        chat_rooms = get_chat_rooms(username)
-        return chat_rooms
+    # def get_queryset(self):
+    #     self.request.query_params.get
+    # username = self.request.query_params.get("username", None)
+    # chat_rooms = get_chat_rooms(username)
+    # return chat_rooms
 
 
 class ChatRetrieve(RetrieveAPIView):

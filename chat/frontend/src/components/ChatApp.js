@@ -50,7 +50,9 @@ class ChatApp extends React.Component {
     render() {
         return (
             <div>
-                <SidePanel />
+                <SidePanel
+                    serverInstance={WebSocketServer.getServerInstance()}
+                />
                 {/* <div className="right"> */}
                 {this.props.selected ? (
                     <ChatRoom

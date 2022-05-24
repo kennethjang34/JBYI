@@ -43,6 +43,7 @@ class Account(models.Model):
         related_name="followers",
     )
     timestamp = models.DateTimeField(auto_now_add=True)
+    channel_name = models.CharField(max_length=100, default="")
 
     def __str__(self):
         return self.userID

@@ -21,11 +21,9 @@ export const loadMessages = (chatID, messages) => {
 
 export const loadChats = (chats) => {
     const trimmedChats = {};
-    console.log(chats);
     chats.map((chat) => {
         trimmedChats[chat.chatID] = chat;
     });
-    console.log(chats);
     return {
         type: actionTypes.LOAD_CHATS,
         chats: trimmedChats,
@@ -46,7 +44,6 @@ export const chatLoadError = (message) => {
 };
 
 export const getChatsAction = (currentUser) => {
-    console.log("getChatsCalled");
     return (dispatch) => {
         axios
             .get("http://127.0.0.1:8000/chat/api/", {
@@ -58,7 +55,6 @@ export const getChatsAction = (currentUser) => {
                 },
             })
             .then((response) => {
-                console.log(response.data);
                 dispatch(loadChats(response.data));
             })
             .catch((err) => {
@@ -73,7 +69,7 @@ export const createChatAction = (participants) => {
             .post(
                 "http://127.0.0.1:8000/chat/api/create/",
                 {
-                    // participants: ["admin", "jang"],
+                    participants: ["admin", "jang"],
                     // participants: participants,
                 },
                 {
@@ -91,9 +87,9 @@ export const createChatAction = (participants) => {
     };
 };
 
-export const chatCreated = (chat) => {
+export const chatCreated = (response) => {
     return {
         type: actionTypes.CHAT_CREATED,
-        chat: chat,
+        chat: response,
     };
 };

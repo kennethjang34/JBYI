@@ -94,6 +94,7 @@ export class WebSocketServer {
                 this.previousMessagesHandler(parsedData.chatID, messages);
                 break;
             case "new_message":
+                console.log(parsedData.message);
                 // const message = JSON.parse(parsedData.message);
                 const message = parsedData.message;
                 this.newMessageHandler(parsedData.chatID, message);

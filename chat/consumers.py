@@ -1,3 +1,4 @@
+import asyncio
 import json
 from channels.generic.websocket import WebsocketConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -9,9 +10,16 @@ import datetime
 from django.shortcuts import get_object_or_404
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
+import channels.layers
+from asgiref.sync import async_to_sync
+from django.dispatch import receiver
+from django.db.models.signals import *
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    consumers = {}
+    channel_names = {}
+
     @staticmethod
     def message_to_json(message):
         return json.dumps(message)
@@ -25,7 +33,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # ChatConsumer assumes the chat room has already been created
     @staticmethod
     async def get_chat_room(chatID):
-
         chat = await database_sync_to_async(get_object_or_404)(Chat, pk=chatID)
         return chat
 
@@ -64,19 +71,37 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send_previous_messages(data["chatID"], json_messages)
 
     @database_sync_to_async
-    def get_chats_with_token(self, token):
+    def get_chats_with_token(self):
+        token = self.scope["url_route"]["kwargs"]["user_token"]
+        self.user = (Token.objects.get)(key=token).user
+        self.account = self.user.account
+        self.chats = list(self.account.chats.all())
+        return self.chats
+
+    @database_sync_to_async
+    def get_userID(self):
         token = self.scope["url_route"]["kwargs"]["user_token"]
         user = (Token.objects.get)(key=token).user
-        account = user.account
-        return list(account.chats.all())
+        return str(user.account.userID)
+
+    @database_sync_to_async
+    def store_channel_name(self):
+        self.account.channel_name = self.channel_name
+        self.account.save()
 
     async def connect(self):
-        token = self.scope["url_route"]["kwargs"]["user_token"]
-        chats = await self.get_chats_with_token(token)
+        # token = self.scope["url_route"]["kwargs"]["user_token"]
+        # userID = await self.get_userID()
+        # this sets up self.user and self.account as well
+        chats = await self.get_chats_with_token()
         self.room_group_names = []
+        await self.store_channel_name()
+
         for chat in chats:
             self.room_group_names.append(chat.chatID)
+
             await self.channel_layer.group_add(chat.chatID, self.channel_name)
+            # await self.channel_layer.group_add(chat.chatID, userID)
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -97,7 +122,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
             },
         )
 
-    #
+    # To use signal, consumer.channel_layer.group_add method had to be made synchronous
+    @staticmethod
+    def create_new_group(sender, **kwargs):
+        instance = kwargs.pop("instance", None)
+        action = kwargs.pop("action", None)
+        pk_set = kwargs.pop("pk_set", None)
+        if action == "post_add":
+            chatID = instance.chatID
+            participants = instance.participants
+            channel_layer = channels.layers.get_channel_layer()
+            for participant in participants.all():
+                channel_name = participant.channel_name
+                async_to_sync(channel_layer.group_add)(chatID, channel_name)
+
     # new message arrives at the server. called once only for each new message
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -143,5 +181,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group (not from the frontend socket)
     async def chat_message_arrive(self, event):
-
         await self.send(text_data=json.dumps(event["message"]))
+
+
+m2m_changed.connect(
+    receiver=ChatConsumer.create_new_group, sender=Chat.participants.through
+)

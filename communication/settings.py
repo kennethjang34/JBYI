@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "channels",
+    # "channels_presence",
     "chat",
     "rest_framework",
     "dj_rest_auth",

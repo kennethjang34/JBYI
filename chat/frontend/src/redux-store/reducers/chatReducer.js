@@ -14,6 +14,8 @@ const initialState = {
 const addMessage = (state, action) => {
     const chat = state.chats[action.chatID];
     const messages = [...chat.messages, action.message];
+    console.log(messages);
+
     const chats = { ...state.chats };
     chats[action.chatID].messages = messages;
     return { ...state, chats: chats };
@@ -39,9 +41,9 @@ const loadChats = (state, action) => {
 
 const chatCreated = (state, action) => {
     const chats = { ...state.chats };
-    chats[action.chatID] = {
+    chats[action.chat.chatID] = {
         messages: [],
-        participants: action.participants,
+        participants: action.chat.participants,
     };
     return { ...state, chats: { ...chats } };
 };

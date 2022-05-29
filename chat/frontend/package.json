@@ -32,6 +32,12 @@
         "babel-preset-es2017": "*",
         "babel-preset-react": "*",
         "buffer": "*",
-        "process": "*"
+        "process": "*",
+        "react-error-overlay": "^6.0.9"
+    },
+    "alias": {
+        "process": {
+            "global": "{}"
+        }
     }
 }

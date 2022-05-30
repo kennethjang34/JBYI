@@ -182,7 +182,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await sync_to_async(messageObj.chats.set)(chats)
             # messageSerialized = await (sync_to_async(MessageSerializer)(messageObj))
             messageSerialized = await ChatConsumer.serialize_message(messageObj)
-            print(messageSerialized)
             await self.send_new_message(
                 chatID=message["chatID"],
                 message=(messageSerialized),

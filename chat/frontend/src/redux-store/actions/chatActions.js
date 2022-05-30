@@ -87,6 +87,13 @@ export const createChatAction = (participants) => {
     };
 };
 
+export const chatAdded = (chatID, participants) => {
+    return {
+        type: actionTypes.CHAT_ADDED,
+        chatID: chatID,
+        participants: participants,
+    };
+};
 export const chatCreated = (response) => {
     return {
         type: actionTypes.CHAT_CREATED,

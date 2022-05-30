@@ -5,16 +5,17 @@ import * as authActions from "../redux-store/actions/authActions";
 
 class SidePanel extends React.Component {
     getUserNamesTrimmed = (usernames) => {
-        const trimmed = usernames.map((user, index) => {
-            if (index < usernames.length - 1) {
-                return usernames[index] + ", ";
-            } else {
-                return usernames[index];
-            }
-        });
-        return trimmed;
+        if (usernames) {
+            const trimmed = usernames.map((user, index) => {
+                if (index < usernames.length - 1) {
+                    return usernames[index] + ", ";
+                } else {
+                    return usernames[index];
+                }
+            });
+            return trimmed;
+        }
     };
-
     chatSelectionHandler = (event) => {
         const chatID = event.target.value;
         this.props.selectChat(chatID);

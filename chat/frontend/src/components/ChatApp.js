@@ -20,7 +20,8 @@ class ChatApp extends React.Component {
                 serverInstance.setMessageHandlers(
                     userToken,
                     this.props.loadMessages,
-                    this.props.addMessage
+                    this.props.addMessage,
+                    this.props.chatAdded
                 );
                 Object.keys(this.props.chats).map((chatID) => {
                     serverInstance.sendMessage(chatID, {
@@ -93,6 +94,14 @@ const mapDispatchToProps = (dispatch) => {
         },
         loadMessages: (chatID, messages) => {
             return dispatch(chatActions.loadMessages(chatID, messages));
+        },
+        chatAdded: (chatID, participants) => {
+            return dispatch(
+                chatActions.chatAdded(
+                    chatID,
+                    participants.map((participant) => participant.userID)
+                )
+            );
         },
     };
 };

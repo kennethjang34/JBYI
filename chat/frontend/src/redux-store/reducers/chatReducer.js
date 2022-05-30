@@ -14,7 +14,6 @@ const initialState = {
 const addMessage = (state, action) => {
     const chat = state.chats[action.chatID];
     const messages = [...chat.messages, action.message];
-    console.log(messages);
 
     const chats = { ...state.chats };
     chats[action.chatID].messages = messages;
@@ -53,12 +52,28 @@ const deleteChats = (state, action) => {
     return { ...state };
 };
 
+const chatAdded = (state, action) => {
+    const chats = { ...state.chats };
+    console.log(action);
+    if (!chats[action.chatID]) {
+        chats[action.chatID] = {
+            messages: [],
+            participants: action.participants,
+        };
+        return { ...state, chats: chats };
+    } else {
+        return state;
+    }
+};
+
 export default reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.LOAD_CHATS:
             return loadChats(state, action);
         case actionTypes.CHAT_CREATED:
             return chatCreated(state, action);
+        case actionTypes.CHAT_ADDED:
+            return chatAdded(state, action);
         case actionTypes.DELETE_CHATS:
             return deleteChats(state, action);
         case actionTypes.SELECT_CHAT:

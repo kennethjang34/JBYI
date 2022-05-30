@@ -42,6 +42,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         serialized_queryset = MessageSerializer(messages, many=True).data
         return list(serialized_queryset)
 
+    @staticmethod
+    # @database_sync_to_async
+    def get_serialized_accounts(accounts):
+        serialized_queryset = AccountSerializer(accounts, many=True).data
+        return list(serialized_queryset)
+
     # messages: queryset of Message model instances
     @staticmethod
     async def messages_to_json(messages):
@@ -136,6 +142,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 channel_name = participant.channel_name
                 async_to_sync(channel_layer.group_add)(chatID, channel_name)
 
+            async_to_sync(channel_layer.group_send)(
+                chatID,
+                {
+                    "type": "notify_new_chat",
+                    "message": {
+                        "message_type": "new_chat",
+                        "chatID": chatID,
+                        "participants": ChatConsumer.get_serialized_accounts(
+                            participants.all()
+                        ),
+                    },
+                },
+            )
+
     # new message arrives at the server. called once only for each new message
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -162,10 +182,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await sync_to_async(messageObj.chats.set)(chats)
             # messageSerialized = await (sync_to_async(MessageSerializer)(messageObj))
             messageSerialized = await ChatConsumer.serialize_message(messageObj)
+            print(messageSerialized)
             await self.send_new_message(
                 chatID=message["chatID"],
                 message=(messageSerialized),
             )
+
+    async def notify_new_chat(self, event):
+        await self.send(text_data=json.dumps(event["message"]))
 
     # messages must be in json
     async def send_previous_messages(self, chatID, messages):

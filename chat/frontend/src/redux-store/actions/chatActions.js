@@ -69,8 +69,8 @@ export const createChatAction = (participants) => {
             .post(
                 "http://127.0.0.1:8000/chat/api/create/",
                 {
-                    participants: ["admin", "jang"],
-                    // participants: participants,
+                    // participants: ["admin", "jang"],
+                    participants: participants,
                 },
                 {
                     headers: {

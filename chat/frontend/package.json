@@ -13,8 +13,11 @@
     "dependencies": {
         "antd": "*",
         "axios": "*",
+        "chat": "^1.0.8",
+        "lmdb": "^2.4.5",
         "react": "*",
         "react-dom": "*",
+        "react-modal": "^3.15.1",
         "react-redux": "*",
         "react-router-dom": "^6.3.0",
         "redux": "*",
@@ -32,6 +35,7 @@
         "babel-preset-es2017": "*",
         "babel-preset-react": "*",
         "buffer": "*",
+        "parcel": "^2.6.0",
         "process": "*",
         "react-error-overlay": "^6.0.9"
     },

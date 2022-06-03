@@ -108,6 +108,7 @@ class SidePanel extends React.Component {
                 transform: "translate(-50%, -50%)",
             },
         };
+        console.log(this.props.friends);
         return (
             <div id="sidepanel">
                 {/* //  <div className="container bootstrap snippets bootdey"> */}
@@ -150,6 +151,7 @@ class SidePanel extends React.Component {
                                             createHandler={
                                                 this.props.createChat
                                             }
+                                            friends={this.props.friends}
                                         />
                                     </div>
                                 }
@@ -207,6 +209,7 @@ const mapStateToProps = (state) => {
     return {
         currentUser: state.auth.currentUser,
         chats: state.chat.chats,
+        friends: state.auth.friends,
     };
 };
 const mapDispatchToProps = (dispatch) => {

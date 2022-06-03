@@ -9,10 +9,12 @@ const initialState = {
 };
 
 const login_success = (state, action) => {
+    // console.log(action.currentUser);
     return {
         ...state,
         token: action.token,
         currentUser: action.currentUser,
+        friends: null,
         loading: false,
         error: null,
     };
@@ -44,6 +46,13 @@ const logout = (state, action) => {
     };
 };
 
+const load_friends = (state, action) => {
+    return {
+        ...state,
+        friends: action.friends,
+    };
+};
+
 export default reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.AUTH_START:
@@ -54,6 +63,8 @@ export default reducer = (state = initialState, action) => {
             return login_fail(state, action);
         case actionTypes.LOGOUT:
             return logout(state, action);
+        case actionTypes.LOAD_FRIENDS:
+            return load_friends(state, action);
         default:
             return state;
     }

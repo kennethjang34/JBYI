@@ -21,7 +21,7 @@ class SidePanel extends React.Component {
     };
     closeChatPrompter = () => {
         this.setState({
-            chatPrompterOpen: true,
+            chatPrompterOpen: false,
         });
     };
     // CreateChatHandler = (event) => {
@@ -55,7 +55,6 @@ class SidePanel extends React.Component {
         const chats = this.props.chats;
         const chats_rendered = Object.keys(chats).map((chatID, index) => {
             const chat = chats[chatID];
-            // console.log(chat["participants"]);
             const usernames = [
                 ...this.getUserNamesTrimmed(chat["participants"]),
             ];
@@ -108,7 +107,6 @@ class SidePanel extends React.Component {
                 transform: "translate(-50%, -50%)",
             },
         };
-        console.log(this.props.friends);
         return (
             <div id="sidepanel">
                 {/* //  <div className="container bootstrap snippets bootdey"> */}
@@ -148,11 +146,21 @@ class SidePanel extends React.Component {
                                 content={
                                     <div>
                                         <ChatPrompter
-                                            createHandler={
-                                                this.props.createChat
-                                            }
+                                            createHandler={(friends) => {
+                                                const participants = [
+                                                    ...friends,
+                                                    this.props.currentUser,
+                                                ];
+                                                this.props.createChat(
+                                                    participants
+                                                );
+                                                this.closeChatPrompter();
+                                            }}
                                             friends={this.props.friends}
                                         />
+                                        <a onClick={this.closeChatPrompter}>
+                                            Close
+                                        </a>
                                     </div>
                                 }
                                 title="Who do you want to invite?"

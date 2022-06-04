@@ -20,9 +20,7 @@ export const loginSuccess = (username, token) => {
 };
 
 export const loadFriends = (friends) => {
-    console.log(friends);
-
-    localStorage.setItem("friends", friends);
+    localStorage.setItem("friends", JSON.stringify(friends));
     return {
         type: actionTypes.LOAD_FRIENDS,
         friends: [...friends],
@@ -42,8 +40,6 @@ export const loadFriendsAction = (username) => {
             })
             .then((response) => {
                 dispatch(loadFriends(response.data));
-
-                // console.log(response.data);
             });
     };
 };
@@ -137,16 +133,14 @@ export const setLogOutTimer = (timeGiven) => {
 export const checkAuthAction = (dispatch, getState) => {
     const state = getState();
     const currentUser = localStorage.getItem("currentUser");
-    // console.log(state.currentUser);
     const token = localStorage.getItem("token");
-    console.log(currentUser);
     // if (currentUser !== undefined && currentUser !== null) {
     // token = currentUser.token;
     // }
 
     if (token !== undefined) {
         dispatch(loginSuccess(currentUser, token));
-        dispatch(loadFriends(localStorage.getItem("friends")));
+        dispatch(loadFriends(JSON.parse(localStorage.getItem("friends"))));
         const expirationTime = new Date(localStorage.getItem("expirationTime"));
         if (expirationTime <= new Date()) {
             dispatch(logoutAction);

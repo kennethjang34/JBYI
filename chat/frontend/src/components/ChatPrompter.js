@@ -4,27 +4,40 @@ import "antd/dist/antd.css";
 import { Select, Button } from "antd";
 const { Option } = Select;
 
-const handleChange = (value) => {
-    console.log(`selected ${value}`);
+let toInvite = [];
+const addFriend = (value) => {
+    if (value) {
+        toInvite.push(value);
+    }
 };
-
+const removeFriend = (value) => {
+    if (value) {
+        toInvite = toInvite.filter(function(item) {
+            return item !== value;
+        });
+    }
+};
 const renderFriends = (friends) => {
-    console.log(friends);
     const friendsRendered = friends.map((friend) => {
-        <Option value="china" label="China">
-            <div className="demo-option-label-item">
-                <span role="img" aria-label="China">
-                    🇨🇳
-                </span>
-                {friend.userID}
-            </div>
-        </Option>;
+        return (
+            <Option
+                value={friend.userID}
+                label={friend.userID}
+                key={friend.userID}
+            >
+                <div className="demo-option-label-item">
+                    <span role="img" aria-label={friend.userID}>
+                        😀
+                    </span>
+                    {" " + friend.userID}
+                </div>
+            </Option>
+        );
     });
     return friendsRendered;
 };
 
 const ChatPrompter = (props) => {
-    console.log(props);
     return (
         <div>
             <Select
@@ -32,47 +45,21 @@ const ChatPrompter = (props) => {
                 style={{
                     width: "100%",
                 }}
-                placeholder="select one country"
-                defaultValue={["china"]}
-                onChange={handleChange}
-                optionLabelProp="label"
+                placeholder="select people to invite"
+                // defaultValue={["china"]}
+                onSelect={addFriend}
+                onDeselect={removeFriend}
+                // optionlabelprop="label"
             >
                 {props.friends && renderFriends(props.friends)}
-
-                <Option value="china" label="China">
-                    <div className="demo-option-label-item">
-                        <span role="img" aria-label="China">
-                            🇨🇳
-                        </span>
-                        China (中国)
-                    </div>
-                </Option>
-                <Option value="usa" label="USA">
-                    <div className="demo-option-label-item">
-                        <span role="img" aria-label="USA">
-                            🇺🇸
-                        </span>
-                        USA (美国)
-                    </div>
-                </Option>
-                <Option value="japan" label="Japan">
-                    <div className="demo-option-label-item">
-                        <span role="img" aria-label="Japan">
-                            🇯🇵
-                        </span>
-                        Japan (日本)
-                    </div>
-                </Option>
-                <Option value="korea" label="Korea">
-                    <div className="demo-option-label-item">
-                        <span role="img" aria-label="Korea">
-                            🇰🇷
-                        </span>
-                        Korea (韩国)
-                    </div>
-                </Option>
             </Select>
-            <Button onClick={props.createHandler}>Create Chat</Button>
+            <Button
+                onClick={() => {
+                    toInvite && props.createHandler(toInvite);
+                }}
+            >
+                Create Chat
+            </Button>
         </div>
     );
 };

@@ -19,6 +19,31 @@ export const loginSuccess = (username, token) => {
     };
 };
 
+export const loadFriends = (friends) => {
+    localStorage.setItem("friends", JSON.stringify(friends));
+    return {
+        type: actionTypes.LOAD_FRIENDS,
+        friends: [...friends],
+    };
+};
+
+export const loadFriendsAction = (username) => {
+    return (dispatch, getState) => {
+        axios
+            .get("http://127.0.0.1:8000/account/api/friends", {
+                headers: {
+                    Authorization: `Token ${localStorage.getItem("token")}`,
+                },
+                data: {
+                    username: username,
+                },
+            })
+            .then((response) => {
+                dispatch(loadFriends(response.data));
+            });
+    };
+};
+
 export const loginFail = (error) => {
     return {
         type: actionTypes.LOGIN_FAIL,
@@ -60,6 +85,7 @@ export const loginAction = (username, password) => {
                 });
 
                 dispatch(setLogOutTimer(3600 * 1000));
+                dispatch(loadFriendsAction(username));
             });
     };
 };
@@ -106,12 +132,19 @@ export const setLogOutTimer = (timeGiven) => {
 
 export const checkAuthAction = (dispatch, getState) => {
     const state = getState();
-    const currentUser = state.currentUser;
-    const token = null;
-    if (currentUser !== undefined && currentUser !== null) {
-        token = currentUser.token;
-    }
+    const currentUser = localStorage.getItem("currentUser");
+    const token = localStorage.getItem("token");
+    // if (currentUser !== undefined && currentUser !== null) {
+    // token = currentUser.token;
+    // }
+
     if (token !== undefined) {
+        dispatch(loginSuccess(currentUser, token));
+        if (localStorage.getItem("freinds")) {
+            dispatch(loadFriends(JSON.parse(localStorage.getItem("friends"))));
+        } else {
+            dispatch(loadFriendsAction);
+        }
         const expirationTime = new Date(localStorage.getItem("expirationTime"));
         if (expirationTime <= new Date()) {
             dispatch(logoutAction);

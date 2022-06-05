@@ -14,4 +14,7 @@ Pipfile
 Pipfile.lock
 vscode-neovim/
 secret_key.py
+<<<<<<< HEAD
 chat/migrations/__pycache__/*
+=======
+>>>>>>> new_chat_prmopter

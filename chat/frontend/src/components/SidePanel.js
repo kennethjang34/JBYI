@@ -2,8 +2,34 @@ import React from "react";
 import { connect } from "react-redux";
 import * as chatActions from "../redux-store/actions/chatActions";
 import * as authActions from "../redux-store/actions/authActions";
-
+import Modal from "react-modal";
+import { Select } from "antd";
+import { Popover, Button } from "antd";
+import ChatPrompter from "./ChatPrompter";
 class SidePanel extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            chatPrompterOpen: false,
+        };
+    }
+
+    openChatPrompter = () => {
+        this.setState({
+            chatPrompterOpen: true,
+        });
+    };
+    closeChatPrompter = () => {
+        this.setState({
+            chatPrompterOpen: false,
+        });
+    };
+    // CreateChatHandler = (event) => {
+    //     // const participants = event.target.value
+    //     if(this.state.chatPrompterOpen) {
+    //         return
+    //     }
+    // }
     getUserNamesTrimmed = (usernames) => {
         if (usernames) {
             const trimmed = usernames.map((user, index) => {
@@ -21,11 +47,14 @@ class SidePanel extends React.Component {
         this.props.selectChat(chatID);
     };
 
+    createChatAction = (event) => {
+        this.props.createChat(event.target.value);
+    };
+
     renderChats = () => {
         const chats = this.props.chats;
         const chats_rendered = Object.keys(chats).map((chatID, index) => {
             const chat = chats[chatID];
-            // console.log(chat["participants"]);
             const usernames = [
                 ...this.getUserNamesTrimmed(chat["participants"]),
             ];
@@ -68,6 +97,16 @@ class SidePanel extends React.Component {
     };
 
     render = () => {
+        const customStyles = {
+            content: {
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+            },
+        };
         return (
             <div id="sidepanel">
                 {/* //  <div className="container bootstrap snippets bootdey"> */}
@@ -97,10 +136,37 @@ class SidePanel extends React.Component {
                             <button
                                 className="btn btn-primary btn-block"
                                 type="text"
-                                onClick={this.props.createChat}
+                                onClick={this.openChatPrompter}
                             >
                                 New Chat
                             </button>
+                            {/* <div> */}
+                            {/* {this.state.chatPrompterOpen && <ChatPrompter />} */}
+                            <Popover
+                                content={
+                                    <div>
+                                        <ChatPrompter
+                                            createHandler={(friends) => {
+                                                const participants = [
+                                                    ...friends,
+                                                    this.props.currentUser,
+                                                ];
+                                                this.props.createChat(
+                                                    participants
+                                                );
+                                                this.closeChatPrompter();
+                                            }}
+                                            friends={this.props.friends}
+                                        />
+                                        <a onClick={this.closeChatPrompter}>
+                                            Close
+                                        </a>
+                                    </div>
+                                }
+                                title="Who do you want to invite?"
+                                trigger="click"
+                                visible={this.state.chatPrompterOpen}
+                            ></Popover>
                         </div>
 
                         <div className="p-15" id="dropdown">
@@ -151,6 +217,7 @@ const mapStateToProps = (state) => {
     return {
         currentUser: state.auth.currentUser,
         chats: state.chat.chats,
+        friends: state.auth.friends,
     };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -168,4 +235,5 @@ const mapDispatchToProps = (dispatch) => {
         },
     };
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(SidePanel);

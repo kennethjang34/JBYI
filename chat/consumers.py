@@ -5,7 +5,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
 from chat.api.views import get_chat_rooms
 from chat.api.serializers import *
-from .models import Message, Chat, Account
+from .models import Message, Chat
+from communication.models import Account
 import datetime
 from django.shortcuts import get_object_or_404
 from asgiref.sync import sync_to_async
@@ -14,6 +15,7 @@ import channels.layers
 from asgiref.sync import async_to_sync
 from django.dispatch import receiver
 from django.db.models.signals import *
+from communication.api.serializers import AccountSerializer
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -92,6 +94,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def store_channel_name(self):
+
         self.account.channel_name = self.channel_name
         self.account.save()
 

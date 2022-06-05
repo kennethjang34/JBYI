@@ -33,6 +33,10 @@ INSTALLED_APPS = [
     "channels",
     # "channels_presence",
     "chat",
+<<<<<<< HEAD
+=======
+    "communication",
+>>>>>>> new_chat_prmopter
     "rest_framework",
     "dj_rest_auth",
     "dj_rest_auth.registration",

@@ -11,6 +11,7 @@ from rest_framework.generics import (
 )
 from .serializers import *
 from chat.models import *
+from communication.models import Account
 
 User = get_user_model()
 

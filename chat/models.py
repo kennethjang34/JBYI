@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from communication.models import Account
 
 User = get_user_model()
 
@@ -24,7 +25,7 @@ class Message(models.Model):
         max_length=255, primary_key=True, null=False, default=pkgen
     )
     author = models.ForeignKey(
-        "Account",
+        Account,
         related_name="messages_sent",
         on_delete=models.CASCADE,
     )
@@ -35,25 +36,25 @@ class Message(models.Model):
         return self.messageID
 
 
-class Account(models.Model):
-    userID = models.CharField(max_length=15, primary_key=True, default=pkgen)
-    user = models.OneToOneField(User, related_name="account", on_delete=models.CASCADE)
-    following = models.ManyToManyField(
-        "Account",
-        related_name="followers",
-    )
-    timestamp = models.DateTimeField(auto_now_add=True)
-    channel_name = models.CharField(max_length=100, default="")
+# class Account(models.Model):
+#     userID = models.CharField(max_length=15, primary_key=True, default=pkgen)
+#     user = models.OneToOneField(User, related_name="account", on_delete=models.CASCADE)
+#     following = models.ManyToManyField(
+#         "Account",
+#         related_name="followers",
+#     )
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#     channel_name = models.CharField(max_length=100, default="")
 
-    def __str__(self):
-        return self.userID
+#     def __str__(self):
+#         return self.userID
 
-    # called whenever there is a new user
-    @receiver(post_save, sender=get_user_model())
-    def create_account(sender, instance, created, **kwargs):
-        if created:
-            account = Account.objects.create(userID=instance.username, user=instance)
-            # no friends !
+#     # called whenever there is a new user
+#     @receiver(post_save, sender=get_user_model())
+#     def create_account(sender, instance, created, **kwargs):
+#         if created:
+#             account = Account.objects.create(userID=instance.username, user=instance)
+#             # no friends !
 
 
 class Chat(models.Model):

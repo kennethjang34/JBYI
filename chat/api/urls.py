@@ -4,6 +4,7 @@ from .views import *
 
 app_name = "chat"
 
+
 urlpatterns = [
     re_path("$", ChatList.as_view()),
     re_path("create/$", ChatCreate.as_view()),

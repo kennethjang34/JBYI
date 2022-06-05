@@ -140,7 +140,11 @@ export const checkAuthAction = (dispatch, getState) => {
 
     if (token !== undefined) {
         dispatch(loginSuccess(currentUser, token));
-        dispatch(loadFriends(JSON.parse(localStorage.getItem("friends"))));
+        if (localStorage.getItem("freinds")) {
+            dispatch(loadFriends(JSON.parse(localStorage.getItem("friends"))));
+        } else {
+            dispatch(loadFriendsAction);
+        }
         const expirationTime = new Date(localStorage.getItem("expirationTime"));
         if (expirationTime <= new Date()) {
             dispatch(logoutAction);

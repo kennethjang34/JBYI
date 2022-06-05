@@ -6,13 +6,26 @@ import Modal from "react-modal";
 import { Select } from "antd";
 import { Popover, Button } from "antd";
 import ChatPrompter from "./ChatPrompter";
+import AddFriendPrompter from "./AddFriendPrompter";
 class SidePanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             chatPrompterOpen: false,
+            addFriendPrompterOpen: false,
         };
     }
+
+    openAddFriendPrompter = () => {
+        this.setState({
+            addFriendPrompterOpen: true,
+        });
+    };
+    closeAddFriendPrompter = () => {
+        this.setState({
+            addFriendPrompterOpen: false,
+        });
+    };
 
     openChatPrompter = () => {
         this.setState({
@@ -24,12 +37,7 @@ class SidePanel extends React.Component {
             chatPrompterOpen: false,
         });
     };
-    // CreateChatHandler = (event) => {
-    //     // const participants = event.target.value
-    //     if(this.state.chatPrompterOpen) {
-    //         return
-    //     }
-    // }
+
     getUserNamesTrimmed = (usernames) => {
         if (usernames) {
             const trimmed = usernames.map((user, index) => {
@@ -47,8 +55,12 @@ class SidePanel extends React.Component {
         this.props.selectChat(chatID);
     };
 
-    createChatAction = (event) => {
+    createChatHandler = (event) => {
         this.props.createChat(event.target.value);
+    };
+
+    addFriend = (event) => {
+        this.props.addFriend(event.target.value);
     };
 
     renderChats = () => {
@@ -169,6 +181,45 @@ class SidePanel extends React.Component {
                             ></Popover>
                         </div>
 
+                        <div className="p-15">
+                            <button
+                                className="btn btn-primary btn-block"
+                                type="text"
+                                onClick={this.openAddFriendPrompter}
+                            >
+                                Add a friend
+                            </button>
+                            {/* <div> */}
+                            {/* {this.state.chatPrompterOpen && <ChatPrompter />} */}
+                            <Popover
+                                content={
+                                    <div>
+                                        <AddFriendPrompter
+                                        // createHandler={(person) => {
+                                        //     // const participants = [
+                                        //     //     ...friends,
+                                        //     //     this.props.currentUser,
+                                        //     // ];
+                                        //     this.props.addFriend(person);
+                                        //     this.closeAddFriendPrompter();
+                                        // }}
+                                        // friends={this.props.friends}
+                                        />
+                                        <a
+                                            onClick={
+                                                this.closeAddFriendPrompter
+                                            }
+                                        >
+                                            Close
+                                        </a>
+                                    </div>
+                                }
+                                // title="Who do you want to invite?"
+                                trigger="click"
+                                visible={this.state.addFriendPrompterOpen}
+                            ></Popover>
+                        </div>
+
                         <div className="p-15" id="dropdown">
                             <div className="dropdown">
                                 <a
@@ -232,6 +283,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         createChat: (participants) => {
             dispatch(chatActions.createChatAction(participants));
+        },
+        addFriend: (friend) => {
+            dispatch();
         },
     };
 };

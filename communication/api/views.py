@@ -1,7 +1,11 @@
+from functools import partial
 from django.contrib.auth import get_user_model
 from django.http import QueryDict
 from django.shortcuts import get_object_or_404
+from requests import Response
 from rest_framework import permissions
+from rest_framework import filters
+
 from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,
@@ -47,6 +51,16 @@ def get_user_account(user):
 #     pass
 
 
+class AccountList(ListAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = AccountSerializer
+    queryset = Account.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["userID"]
+    # def get(self, request, *args, **kwargs):
+    #     return self.list(request, *args, **kwargs)
+
+
 class FriendsList(ListAPIView):
     # queryset = Account.following.all()
     permission_classes = (permissions.IsAuthenticated,)
@@ -54,6 +68,23 @@ class FriendsList(ListAPIView):
 
     def get_queryset(self):
         return get_user_account(self.request.user).following.all()
+
+
+class FriendsUpdate(CreateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = AccountSerializer
+    queryset = Account.objects.all()
+    lookup_field = "pk"
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "friend successfully added"})
+
+
+# list all chat rooms of this user if there is any. For a particular chat room view, use ChatRetrieve
 
 
 # list all chat rooms of this user if there is any. For a particular chat room view, use ChatRetrieve

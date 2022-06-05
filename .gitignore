@@ -14,3 +14,4 @@ Pipfile
 Pipfile.lock
 vscode-neovim/
 secret_key.py
+chat/migrations/__pycache__/*

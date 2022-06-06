@@ -23,10 +23,10 @@ from communication.models import Account
 User = get_user_model()
 
 
-def get_user_account(username):
-    account_list = User.objects.filter(username=username)
-    if account_list is not None:
-        return account_list[0]
+def get_user(username):
+    user = User.objects.filter(username=username)
+    if user is not None:
+        return user[0]
     return None
 
 
@@ -39,8 +39,12 @@ def get_user_account(username):
 #     return None
 
 
-def get_user_account(user):
+def get_account_from_user(user):
     return get_object_or_404(Account, pk=user.username)
+
+
+def get_account(username):
+    return get_account_from_user(get_user(username))
 
 
 # def FollowingList(ListAPIView):
@@ -65,9 +69,14 @@ class FriendsList(ListAPIView):
     # queryset = Account.following.all()
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = AccountSerializer
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ["username"]
 
     def get_queryset(self):
-        return get_user_account(self.request.user).following.all()
+        if self.request.user.username != self.request.query_params.get("userID"):
+            raise permissions.exceptions.PermissionDenied("Permission Denied")
+        # print(self.request.query_params.get("userID"))
+        return get_account(self.request.query_params.get("userID")).following.all()
 
 
 class FriendsUpdate(CreateAPIView):

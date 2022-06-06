@@ -30,17 +30,20 @@ export const loadFriends = (friends) => {
 export const loadFriendsAction = (username) => {
     return (dispatch, getState) => {
         axios
-            .get("http://127.0.0.1:8000/account/api/friends", {
-                headers: {
-                    Authorization: `Token ${localStorage.getItem("token")}`,
-                },
-                data: {
-                    username: username,
-                },
-            })
+            .get(
+                `http://127.0.0.1:8000/account/api/friends?userID=${username}`,
+                {
+                    headers: {
+                        Authorization: `Token ${localStorage.getItem("token")}`,
+                    },
+                    data: {
+                        username: username,
+                    },
+                }
+            )
             .then((response) => {
                 dispatch(loadFriends(response.data));
-                axios.defaults.baseURL = "http://127.0.0.1:8000/api-auth/";
+                // axios.defaults.baseURL = "http://127.0.0.1:8000/api-auth/";
             });
     };
 };
@@ -66,7 +69,7 @@ export const loginAction = (username, password) => {
     return (dispatch, getState) => {
         dispatch(authStart());
         axios
-            .post("login/", {
+            .post("http://127.0.0.1:8000/api-auth/login/", {
                 username: username,
                 password: password,
             })
@@ -101,7 +104,7 @@ export const signUpAction = (username, email, password1, password2) => {
     return (dispatch) => {
         dispatch(authStart());
         axios
-            .post("registration/", {
+            .post("http://127.0.0.1:8000/api-auth/registration/", {
                 username: username,
                 email: email,
                 password1: password1,

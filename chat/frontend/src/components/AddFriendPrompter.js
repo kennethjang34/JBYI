@@ -6,17 +6,13 @@ import { Avatar, Input, AutoComplete, Button } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://127.0.0.1:8000/account/api/";
-
+// axios.defaults.baseURL = "http://127.0.0.1:8000/account/api/";
 const searchResult = (accountID, setOptions, handleSelected) => {
     var accounts = null;
     axios
-        .get(`accounts?search=${accountID}`, {
+        .get(`http://127.0.0.1:8000/account/api/accounts?search=${accountID}`, {
             headers: {
                 Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-            data: {
-                userID: accountID,
             },
         })
         .then((response) => {

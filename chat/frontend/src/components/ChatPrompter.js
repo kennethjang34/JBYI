@@ -39,7 +39,7 @@ const renderFriends = (friends) => {
 
 const ChatPrompter = (props) => {
     return (
-        <div>
+        <div style={{ width: "100%", height: "100%" }}>
             <Select
                 mode="multiple"
                 style={{
@@ -54,6 +54,12 @@ const ChatPrompter = (props) => {
                 {props.friends && renderFriends(props.friends)}
             </Select>
             <Button
+                style={{
+                    position: "absolute",
+                    transform: "translateX(-50%)",
+                    left: "50%",
+                    top: "40%",
+                }}
                 onClick={() => {
                     toInvite && props.createHandler(toInvite);
                 }}

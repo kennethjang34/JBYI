@@ -7,13 +7,14 @@ axios.defaults.baseURL = "http://127.0.0.1:8000/account/api/";
 
 export const sendFriendRequestAction = (person) => {
     return (dispatch) => {
-        axios
-            .post("add-friend", {
-                username: username,
-                password: password,
-                target: person,
-            })
-            .then((response) => {});
+        return;
+        // axios
+        //     .post("add-friend", {
+        //         username: person,
+        //         password: password,
+        //         target: person,
+        //     })
+        //     .then((response) => {});
     };
 };
 

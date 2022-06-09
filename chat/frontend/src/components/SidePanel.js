@@ -156,7 +156,12 @@ class SidePanel extends React.Component {
                             {/* {this.state.chatPrompterOpen && <ChatPrompter />} */}
                             <Popover
                                 content={
-                                    <div>
+                                    <div
+                                        style={{
+                                            width: "300px",
+                                            height: "150px",
+                                        }}
+                                    >
                                         <ChatPrompter
                                             createHandler={(friends) => {
                                                 const participants = [
@@ -170,7 +175,15 @@ class SidePanel extends React.Component {
                                             }}
                                             friends={this.props.friends}
                                         />
-                                        <a onClick={this.closeChatPrompter}>
+                                        <a
+                                            style={{
+                                                position: "absolute",
+                                                top: "80%",
+                                                right: "0%",
+                                                transform: "translateX(-50%)",
+                                            }}
+                                            onClick={this.closeChatPrompter}
+                                        >
                                             Close
                                         </a>
                                     </div>
@@ -206,6 +219,12 @@ class SidePanel extends React.Component {
                                         // friends={this.props.friends}
                                         />
                                         <a
+                                            style={{
+                                                position: "absolute",
+                                                top: "80%",
+                                                right: "0%",
+                                                transform: "translateX(-50%)",
+                                            }}
                                             onClick={
                                                 this.closeAddFriendPrompter
                                             }

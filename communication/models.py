@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-
+from django.db.models import constraints
 User = get_user_model()
 
 
@@ -38,25 +38,25 @@ class Account(models.Model):
 
 
 class FriendRequest(models.Model):
-    requester = models.OneToOneField(Account, related_name="friend_requests_sent", on_delete=models.CASCADE)
-    receiver = models.OneToOneField(Account, related_name="friend_requests_received", on_delete=models.CASCADE)
+    requester = models.ForeignKey(Account, related_name="friend_requests_sent", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(Account, related_name="friend_requests_received", on_delete=models.CASCADE)
     accepted = models.BooleanField(blank=True, null=True, default=None)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "Requester: " + self.requester.__str__() + ", Receiver: " + self.receiver.__str__()
 
+    
     class Meta:
-        class Meta:
-            constraints = [
-                    constraints.UniqueConstraint(
-                        fields=['friend_from', 'friend_to'], name="unique_friendship_reverse"
-                        ),
-                    models.CheckConstraint(
-                        name="prevent_self_follow",
-                        check=~models.Q(friend_from=models.F("friend_to")),
-                        )
-                    ]
+        constraints = [
+                constraints.UniqueConstraint(
+                    fields=['requester', 'receiver'], name="unique_friendship_reverse"
+                    ),
+                models.CheckConstraint(
+                    name="prevent_self_follow",
+                    check=~models.Q(requester=models.F("receiver")),
+                    )
+                ]
 
 
         #  db_table = 'FriendRequest'

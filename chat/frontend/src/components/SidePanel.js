@@ -181,7 +181,7 @@ class SidePanel extends React.Component {
               </button>
               <Popover
                 content={
-                  <div style={{ position: "relative" }}>
+                  <div>
                     <AddFriendPrompter />
                     <a
                       style={{

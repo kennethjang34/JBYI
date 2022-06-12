@@ -22,11 +22,11 @@ def pkgen():
 
 class Account(models.Model):
     userID = models.CharField(max_length=15, primary_key=True, default=pkgen)
-    user = models.OneToOneField(User, related_name="account", on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name="account", on_delete=models.CASCADE, blank=True)
     following = models.ManyToManyField(
             "Account",
             related_name="followers",
-            )
+            blank=True )
     timestamp = models.DateTimeField(auto_now_add=True)
     channel_name = models.CharField(max_length=100, default="")
 

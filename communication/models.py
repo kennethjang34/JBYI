@@ -4,6 +4,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models import constraints
+from django.core.exceptions import ValidationError
 User = get_user_model()
 
 
@@ -46,11 +47,29 @@ class FriendRequest(models.Model):
     def __str__(self):
         return "Requester: " + self.requester.__str__() + ", Receiver: " + self.receiver.__str__()
 
-    
+    def clean(self):
+        if self.accepted==None and (FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=None).exists() or FriendRequest.objects.filter(requester=self.requester, receiver=self.receiver, accepted=None).exists() or FriendRequest.objects.filter(requester=self.requester, receiver=self.receiver, accepted=True).exists()):
+            print(FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=None).exists())
+            raise ValidationError("The requested friendship is duplicate")
+
+
+    @staticmethod
+    def post_save(sender, instance, created, **kwargs):
+        requester = Account.objects.get(userID=instance.requester)
+        receiver = Account.objects.get(userID=instance.receiver)
+        if instance.accepted == True:
+            requester.following.add(receiver)
+            receiver.following.add(requester)
+        elif instance.accepted == False:
+            pass
+        else:            
+            requester.following.add(receiver)
+
+
     class Meta:
         constraints = [
                 constraints.UniqueConstraint(
-                    fields=['requester', 'receiver'], name="unique_friendship_reverse"
+                    fields=['requester', 'receiver','accepted'], name="unique_friend_request"
                     ),
                 models.CheckConstraint(
                     name="prevent_self_follow",
@@ -59,8 +78,5 @@ class FriendRequest(models.Model):
                 ]
 
 
-        #  db_table = 'FriendRequest'
-     #   constraints = [
-    #        models.UniqueConstraint(fields=['app_uuid', 'version_code'], name='unique appversion')
-   #     ]
 
+post_save.connect(FriendRequest.post_save, sender=FriendRequest)

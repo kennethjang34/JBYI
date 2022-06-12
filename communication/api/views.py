@@ -93,6 +93,17 @@ class FriendsUpdate(CreateAPIView):
             return Response({"message": "friend successfully added"})
 
 
+
+
+
+
+class FriendRequest(CreateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = FriendRequestSerializer
+    queryset = FriendRequest.objects.all()
+     
+
+
 # list all chat rooms of this user if there is any. For a particular chat room view, use ChatRetrieve
 
 

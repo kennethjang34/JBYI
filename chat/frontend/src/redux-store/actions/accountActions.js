@@ -23,7 +23,7 @@ export const sendFriendRequestAction = (requester, receiver) => {
         }
       )
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
       });
   };
 };

@@ -5,6 +5,8 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models import constraints
 from django.core.exceptions import ValidationError
+from asgiref.sync import async_to_sync
+import channels.layers
 User = get_user_model()
 
 
@@ -35,7 +37,15 @@ class Account(models.Model):
     def create_account(sender, instance, created, **kwargs): 
         if created: account = Account.objects.create(userID=instance.username, user=instance)
             # no friends !
-
+    @property
+    def group_name(self):
+        """
+        Returns a group name based on the user's id to be used by Django Channels.
+        Example usage:
+        user = User.objects.get(pk=1)
+        group_name = user.group_name
+        """
+        return "user-%s" % self.userID
 
 
 class FriendRequest(models.Model):
@@ -63,10 +73,26 @@ class FriendRequest(models.Model):
         if instance.accepted == True:
             requester.following.add(receiver)
             receiver.following.add(requester)
+            channel_layer = channels.layers.get_channel_layer()    
+            requester_group_name = requester.group_name
+            receiver_group_name = receiver.group_name
+            async_to_sync(channel_layer.group_send)(
+                    requester_group_name,
+                    {
+                        "type": "notify",
+                        "message": {
+                            "message_type": "friend_request_accepted",
+                            "friend_ID": receiver.userID,
+                            },
+                        },
+                    )
+
+
         elif instance.accepted == False:
             pass
         else:            
-            requester.following.add(receiver)
+            pass
+        #requester.following.add(receiver)
 
 
     class Meta:

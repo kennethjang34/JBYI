@@ -162,7 +162,17 @@ class SidePanel extends React.Component {
                       }}
                       friends={this.props.friends}
                     />
-                    <a onClick={this.closeChatPrompter}>Close</a>
+                    <a
+                      style={{
+                        position: "absolute",
+                        top: "80%",
+                        right: "0%",
+                        transform: "translateX(-50%)",
+                      }}
+                      onClick={this.closeChatPrompter}
+                    >
+                      Close
+                    </a>
                   </div>
                 }
                 title="Who do you want to invite?"

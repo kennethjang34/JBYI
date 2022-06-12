@@ -7,7 +7,7 @@ import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 
 // axios.defaults.baseURL = "http://127.0.0.1:8000/account/api/";
-const searchResult = (accountID, setOptions, handleSelected) => {
+const searchResult = (accountID, setOptions, sendFriendRequest) => {
     var accounts = null;
     axios
         .get(`http://127.0.0.1:8000/account/api/accounts?search=${accountID}`, {
@@ -17,7 +17,6 @@ const searchResult = (accountID, setOptions, handleSelected) => {
         })
         .then((response) => {
             accounts = response.data;
-            console.log(accounts);
 
             setOptions(
                 new Array(accounts.length)
@@ -51,6 +50,14 @@ const searchResult = (accountID, setOptions, handleSelected) => {
                                         {/* // handleSelected(account); // }} */}
                                         {account}
                                     </span>{" "}
+                                    <Button
+                                        onClick={() => {
+                                            // console.log("ahahaha");
+                                            sendFriendRequest(account);
+                                        }}
+                                    >
+                                        Request Friendship
+                                    </Button>
                                     {/* {/* <span>{getRandomInt(200, 100)} results</span> */}
                                 </div>
                             ),
@@ -71,7 +78,9 @@ const AddFriendPrompter = (props) => {
 
     const handleSearch = (value) => {
         setOptions(
-            value ? searchResult(value, setOptions, handleSelected) : []
+            value
+                ? searchResult(value, setOptions, props.sendFriendRequest)
+                : []
         );
     };
 
@@ -102,23 +111,54 @@ const AddFriendPrompter = (props) => {
             </AutoComplete>
             <div
                 style={{
-                    left: "114px",
-                    top: "50px",
-                    position: "relative",
+                    // left: "114px",
+                    // top: "50px",
+                    width: "300px",
+                    height: "300px",
+                    position: "absolute",
                     visibility: selected ? "visible" : "hidden",
                 }}
             >
-                <Avatar shape="square" size={64} icon={<UserOutlined />} />
+                <Avatar
+                    shape="square"
+                    size={64}
+                    icon={<UserOutlined />}
+                    style={{
+                        top: "30%",
+                        left: "50%",
+                        position: "absolute",
+                        transform: "translateX(-50%)",
+                    }}
+                />
                 <span
                     style={{
-                        right: "53px",
-                        top: "50px",
-                        position: "relative",
-                        textAlign: "center",
+                        top: "55%",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        // marginLeft: "0px",
+                        position: "absolute",
                     }}
                 >
-                    {selected}
+                    <p style={{ textAlign: "start" }}>{selected}</p>
                 </span>
+                <Button
+                    style={{
+                        left: "50%",
+                        // display: "flex",
+                        top: "65%",
+                        // justifyContent: "center",
+                        position: "absolute",
+                        transform: "translateX(-50%)",
+
+                        // textAlign: "center",
+                    }}
+                    onClick={() => {
+                        console.log("ahahaha");
+                        props.sendFriendRequest(selected);
+                    }}
+                >
+                    Request Friendship
+                </Button>
             </div>
         </div>
     );

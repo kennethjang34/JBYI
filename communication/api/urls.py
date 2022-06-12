@@ -6,7 +6,7 @@ app_name = "communication"
 
 urlpatterns = [
     re_path("friends", FriendsList.as_view()),
-    re_path("add-friend", FriendsUpdate.as_view()),
+    re_path("add-friend", FriendRequestCreate.as_view()),
     re_path("accounts", AccountList.as_view())
     # re_path("create/$", ChatCreate.as_view()),
     # re_path("<pk>$", ChatRetrieve.as_view()),

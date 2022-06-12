@@ -23,10 +23,12 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    timestamp = serializers.DateTimeField(default=timezone.now())
-    requester = serializers.PrimaryKeyRelatedField(many=False, queryset=Account.objects.all())
-    receiver = serializers.PrimaryKeyRelatedField(many=False, queryset=Account.objects.all())
-    
+    requester = serializers.SlugRelatedField(slug_field="userID", queryset=Account.objects.all())
+    receiver = serializers.SlugRelatedField(slug_field="userID", queryset=Account.objects.all())
+    #receiver = serializers.CharField(source="receiver.userID", read_only=True)
+    #requester = serializers.PrimaryKeyRelatedField(many=False, queryset=Account.objects.all())
+    #receiver = serializers.PrimaryKeyRelatedField(many=False, queryset=Account.objects.all())
+    #requester = serializers.CharField(source="requester.userID", read_only=True)
     class Meta:
         model = FriendRequest
         fields = '__all__'

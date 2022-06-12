@@ -48,10 +48,13 @@ class FriendRequest(models.Model):
         return "Requester: " + self.requester.__str__() + ", Receiver: " + self.receiver.__str__()
 
     def clean(self):
-        if self.accepted==None and (FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=None).exists() or FriendRequest.objects.filter(requester=self.requester, receiver=self.receiver, accepted=None).exists() or FriendRequest.objects.filter(requester=self.requester, receiver=self.receiver, accepted=True).exists()):
+        if self.accepted==None and (FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=None).exists() or FriendRequest.objects.filter(requester=self.requester, receiver=self.receiver, accepted=None).exists() or FriendRequest.objects.filter(requester=self.requester, receiver=self.receiver, accepted=True).exists() or FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=True).exists()):
             print(FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=None).exists())
             raise ValidationError("The requested friendship is duplicate")
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     @staticmethod
     def post_save(sender, instance, created, **kwargs):

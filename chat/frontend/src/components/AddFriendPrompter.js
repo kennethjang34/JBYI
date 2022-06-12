@@ -134,7 +134,7 @@ const AddFriendPrompter = (props) => {
           size={64}
           icon={<UserOutlined />}
           style={{
-            top: "30%",
+            top: "20%",
             left: "50%",
             position: "absolute",
             transform: "translateX(-50%)",
@@ -142,7 +142,7 @@ const AddFriendPrompter = (props) => {
         />
         <span
           style={{
-            top: "55%",
+            top: "45%",
             left: "50%",
             transform: "translateX(-50%)",
             // marginLeft: "0px",
@@ -155,7 +155,7 @@ const AddFriendPrompter = (props) => {
           style={{
             left: "50%",
             // display: "flex",
-            top: "65%",
+            top: "55%",
             // justifyContent: "center",
             position: "absolute",
             transform: "translateX(-50%)",

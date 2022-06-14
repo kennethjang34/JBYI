@@ -70,6 +70,7 @@ class FriendRequest(models.Model):
     def post_save(sender, instance, created, **kwargs):
         requester = Account.objects.get(userID=instance.requester)
         receiver = Account.objects.get(userID=instance.receiver)
+        from communication.api.serializers import AccountSerializer
         if instance.accepted == True:
             requester.following.add(receiver)
             receiver.following.add(requester)
@@ -82,7 +83,7 @@ class FriendRequest(models.Model):
                         "type": "notify",
                         "message": {
                             "message_type": "friend_request_accepted",
-                            "friend_ID": receiver.userID,
+                            "friend": AccountSerializer(receiver).data,
                             },
                         },
                     )

@@ -27,3 +27,15 @@ export const sendFriendRequestAction = (requester, receiver) => {
       });
   };
 };
+
+export const friendAddedAction = (friend) => {
+  var existing = localStorage.getItem("friends");
+  if (existing === null) existing = "";
+  localStorage.setItem("friends", existing + JSON.stringify(friend));
+  return (dispatch) => {
+    dispatch({
+      type: actionTypes.FRIEND_ADDED,
+      friend: friend,
+    });
+  };
+};

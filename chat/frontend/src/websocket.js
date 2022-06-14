@@ -9,6 +9,7 @@ export class WebSocketServer {
   previousMessagesHandler = null;
   newMessageHandler = null;
   newChathandler = null;
+  newFriendhandler = null;
   socket = null;
   static getServerInstance(userToken = null) {
     if (!WebSocketServer.serverInstance) {
@@ -44,12 +45,14 @@ export class WebSocketServer {
     chatID,
     previousMessagesHandler,
     newMessageHandler,
-    newChatHandler
+    newChatHandler,
+    newFriendhandler
   ) {
     try {
       this.previousMessagesHandler = previousMessagesHandler;
       this.newMessageHandler = newMessageHandler;
       this.newChatHandler = newChatHandler;
+      this.newFriendhandler = newFriendhandler;
     } catch (error) {
       console.log(error.message);
     }
@@ -68,7 +71,6 @@ export class WebSocketServer {
     try {
       const webSocket = this.socket;
       delete this.socket;
-      // this.sockets.splice(this.sockets.indexOf(webSocket), 1);
       webSocket.close();
     } catch (error) {
       console.log(error.message);
@@ -95,11 +97,9 @@ export class WebSocketServer {
         const messages = parsedData.messages.map((jsonString) =>
           JSON.parse(jsonString)
         );
-
         this.previousMessagesHandler(parsedData.chatID, messages);
         break;
       case "new_message":
-        // const message = JSON.parse(parsedData.message);
         const message = parsedData.message;
         this.newMessageHandler(parsedData.chatID, message);
         break;
@@ -109,7 +109,9 @@ export class WebSocketServer {
         this.newChatHandler(chatID, participants);
         break;
       case "friend_request_accepted":
-        console.log(parsedData.friend_ID);
+        console.log(parsedData.friend);
+        const friend = parsedData.friend;
+        this.newFriendhandler(friend);
         break;
     }
   };

@@ -13,3 +13,4 @@ export const DELETE_CHATS = "DELETE_CHATS";
 export const LOAD_CHATS = "LOAD_CHATS";
 export const CHAT_CREATED = "CHAT_CREATED";
 export const ADD_FRIEND = "ADD_FRIEND";
+export const FRIEND_ADDED = "FRIEND_ADDED";

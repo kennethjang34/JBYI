@@ -89,11 +89,34 @@ class FriendRequest(models.Model):
                     )
 
 
+           # async_to_sync(channel_layer.group_send)(
+           #         receiver_group_name,
+           #         {
+           #             "type": "notify",
+           #             "message": {
+           #                 "message_type": "friend_request_accepted",
+           #                 "friend": accountserializer(requester).data,
+           #                 },
+           #             },
+           #         )
+
         elif instance.accepted == False:
             pass
         else:            
-            pass
-        #requester.following.add(receiver)
+            channel_layer = channels.layers.get_channel_layer()    
+            requester_group_name = requester.group_name
+            receiver_group_name = receiver.group_name
+            from communication.api.serializers import FriendRequestSerializer
+            async_to_sync(channel_layer.group_send)(
+                    receiver_group_name,
+                    {
+                        "type": "notify",
+                        "message": {
+                            "message_type": "friend_request_received",
+                            "friend_request": FriendRequestSerializer(instance).data,
+                            },
+                        },
+                    )
 
 
     class Meta:

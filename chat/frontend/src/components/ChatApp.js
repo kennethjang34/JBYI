@@ -21,7 +21,8 @@ class ChatApp extends React.Component {
           this.props.loadMessages,
           this.props.addMessage,
           this.props.chatAdded,
-          this.props.friendAdded
+          this.props.friendAdded,
+          this.props.friendRequestReceived
         );
         Object.keys(this.props.chats).map((chatID) => {
           serverInstance.sendMessage(chatID, {
@@ -99,6 +100,11 @@ const mapDispatchToProps = (dispatch) => {
           chatID,
           participants.map((participant) => participant.userID)
         )
+      );
+    },
+    friendRequestReceived: (friendRequest) => {
+      return dispatch(
+        accountActions.friendRequestReceivedAction(friendRequest)
       );
     },
     friendAdded: (newFriendID) => {

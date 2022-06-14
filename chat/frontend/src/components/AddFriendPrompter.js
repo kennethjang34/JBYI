@@ -35,7 +35,6 @@ const searchResult = (
               account = `${accounts[idx].userID}`;
             }
             // const account = `${accounts[idx].userID}`;
-            // console.log(account);
             return {
               value: account,
 
@@ -57,7 +56,6 @@ const searchResult = (
                   </span>{" "}
                   <Button
                     onClick={() => {
-                      // console.log("ahahaha");
                       sendFriendRequest(currentUser, account);
                     }}
                   >
@@ -78,7 +76,6 @@ const AddFriendPrompter = (props) => {
 
   const handleSelected = (account) => {
     setSelected(account);
-    console.log("selectedHandled");
   };
 
   const handleSearch = (value) => {
@@ -93,10 +90,6 @@ const AddFriendPrompter = (props) => {
         : []
     );
   };
-
-  // const onSelect = (value) => {
-  //     console.log("onSelect", value);
-  // };
 
   return (
     <div style={{ width: "300px", height: "300px" }}>

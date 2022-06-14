@@ -5,11 +5,11 @@ const baseURLForWebsocket = "ws://127.0.0.1:8000/ws/chat";
 export class WebSocketServer {
   static serverInstance = null;
   sockets = {};
-
   previousMessagesHandler = null;
   newMessageHandler = null;
   newChathandler = null;
   newFriendhandler = null;
+  newFriendRequestHandler = null;
   socket = null;
   static getServerInstance(userToken = null) {
     if (!WebSocketServer.serverInstance) {
@@ -46,13 +46,15 @@ export class WebSocketServer {
     previousMessagesHandler,
     newMessageHandler,
     newChatHandler,
-    newFriendhandler
+    newFriendhandler,
+    newFriendRequestHandler
   ) {
     try {
       this.previousMessagesHandler = previousMessagesHandler;
       this.newMessageHandler = newMessageHandler;
       this.newChatHandler = newChatHandler;
       this.newFriendhandler = newFriendhandler;
+      this.newFriendRequestHandler = newFriendRequestHandler;
     } catch (error) {
       console.log(error.message);
     }
@@ -108,8 +110,10 @@ export class WebSocketServer {
         const participants = parsedData.participants;
         this.newChatHandler(chatID, participants);
         break;
+      case "friend_request_received":
+        this.newFriendRequestHandler(parsedData["friend_request"]);
+        break;
       case "friend_request_accepted":
-        console.log(parsedData.friend);
         const friend = parsedData.friend;
         this.newFriendhandler(friend);
         break;

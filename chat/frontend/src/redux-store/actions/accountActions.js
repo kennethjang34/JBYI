@@ -6,8 +6,6 @@ import axios from "axios";
 axios.defaults.baseURL = "http://127.0.0.1:8000/account/api/";
 
 export const sendFriendRequestAction = (requester, receiver) => {
-  console.log(requester);
-  console.log(receiver);
   return (dispatch) => {
     axios
       .post(
@@ -28,10 +26,30 @@ export const sendFriendRequestAction = (requester, receiver) => {
   };
 };
 
+export const friendRequestReceivedAction = (friendRequest) => {
+  var existing = localStorage.getItem("friendRequests");
+  console.log("Existing: " + existing);
+
+  var stored_requests = existing == null ? [] : JSON.parse(existing);
+  localStorage.setItem(
+    "friendRequests",
+    JSON.stringify([...stored_requests, friendRequest])
+  );
+  console.log(JSON.parse(localStorage.getItem("friendRequests")));
+  return (dispatch) => {
+    console.log(friendRequest);
+    dispatch({
+      type: actionTypes.FRIEND_REQUEST_RECEIVED,
+      friendRequest: friendRequest,
+    });
+  };
+};
+
 export const friendAddedAction = (friend) => {
   var existing = localStorage.getItem("friends");
-  if (existing === null) existing = "";
-  localStorage.setItem("friends", existing + JSON.stringify(friend));
+  var stored_friends = existing == null ? [] : JSON.parse(existing);
+
+  localStorage.setItem("friends", JSON.stringify([...stored_friends, friend]));
   return (dispatch) => {
     dispatch({
       type: actionTypes.FRIEND_ADDED,

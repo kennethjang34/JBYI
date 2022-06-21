@@ -147,7 +147,6 @@ class SidePanel extends React.Component {
                 New Chat
               </button>
               {/* <div> */}
-              {/* {this.state.chatPrompterOpen && <ChatPrompter />} */}
               <Popover
                 content={
                   <div>
@@ -256,7 +255,8 @@ const mapStateToProps = (state) => {
   return {
     currentUser: state.auth.currentUser,
     chats: state.chat.chats,
-    friends: state.auth.friends,
+    // friends: state.auth.friends,
+    friends: state.account.friends,
   };
 };
 const mapDispatchToProps = (dispatch) => {

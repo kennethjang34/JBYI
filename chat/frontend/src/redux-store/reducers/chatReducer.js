@@ -2,11 +2,10 @@ import axios from "axios";
 import * as actionTypes from "../actions/actionTypes";
 import * as messageActions from "../actions/chatActions";
 const initialState = {
-  chats: localStorage.chats ? localStorage.chats : {},
+  chats: localStorage.chats ? JSON.parse(localStorage.chats) : {},
   //currenetUser is user account object of django (Not User model)
   currentUser: localStorage.currentUser ? localStorage.currentUser : null,
   selected: null,
-  //While waiting for response from the backend, shows that circle thingy
   loading: false,
   error: false,
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as actionTypes from "../actions/actionTypes";
 const initialState = {
-  friends: localStorage.friends ? localStorage.friends : [],
+  friends: localStorage.friends ? JSON.parse(localStorage.friends) : [],
 };
 
 const friendAdded = (state, action) => {
@@ -10,10 +10,12 @@ const friendAdded = (state, action) => {
 };
 
 const friendRequestReceived = (state, action) => {
-  console.log(action.friendRequest);
+  friendRequests = state.friendRequests
+    ? [...state.friendRequests, action.friendRequest]
+    : [action.friendRequest];
   return {
     ...state,
-    friendRequests: [...state.friendRequests, action.friendRequest],
+    friendRequests: [...friendRequests],
   };
 };
 export default reducer = (state = initialState, action) => {

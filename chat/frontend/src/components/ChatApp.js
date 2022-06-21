@@ -1,5 +1,4 @@
 import React from "react";
-import webSocketServer from "../websocket";
 import { WebSocketServer } from "../websocket";
 import { connect } from "react-redux";
 import * as authActions from "../redux-store/actions/authActions";
@@ -8,13 +7,13 @@ import * as accountActions from "../redux-store/actions/accountActions";
 import ChatRoom from "./ChatRoom";
 import SidePanel from "./SidePanel";
 import { Outlet } from "react-router-dom";
-
+import { openInvitationNotification, TOP_RIGHT } from "./NotificationPopUp";
 class ChatApp extends React.Component {
   buildConnection = (userToken) => {
     const serverInstance = WebSocketServer.getServerInstance(userToken);
 
     setTimeout(() => {
-      if (serverInstance.isConnectionMade()) {
+      if (serverInstance && serverInstance.isConnectionMade()) {
         console.log(`Connectionto chat: ${userToken} successfully made`);
         serverInstance.setMessageHandlers(
           userToken,
@@ -78,7 +77,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     checkAuth: () => dispatch(authActions.checkAuthAction),
     // logout: () => {
@@ -103,6 +102,12 @@ const mapDispatchToProps = (dispatch) => {
       );
     },
     friendRequestReceived: (friendRequest) => {
+      openInvitationNotification(
+        "New Friend Request",
+        `${friendRequest.requester} wants to be your new friend!`,
+        () => {},
+        TOP_RIGHT
+      );
       return dispatch(
         accountActions.friendRequestReceivedAction(friendRequest)
       );

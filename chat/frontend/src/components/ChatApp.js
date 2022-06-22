@@ -106,6 +106,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         "New Friend Request",
         `${friendRequest.requester} wants to be your new friend!`,
         () => {},
+        () => {},
         TOP_RIGHT
       );
       return dispatch(

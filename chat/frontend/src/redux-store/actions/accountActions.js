@@ -26,6 +26,19 @@ export const sendFriendRequestAction = (requester, receiver) => {
   };
 };
 
+export const sendInvitationResponse = (requestID, response) => {
+  return (dispatch) => {
+    axios.patch(
+      `${serverAddress}/friend-requests/${requestID}`,
+      { op: "replace", path: "/accepted", value: true },
+      {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+  };
+};
 //serveraddress should be like ~~/account/api/friend-request?requester=A&receiver=B
 //the axios then will send to the address a put request to update the accepted field of the request
 export const answerFriendRequestAction = (response) => {

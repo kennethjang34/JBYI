@@ -10,7 +10,8 @@ export const BOTTOM_RIGHT = "bottmRight";
 export const openInvitationNotification = (
   title,
   content,
-  callback,
+  acceptCallback,
+  declineCallback,
   placement = TOP_RIGHT,
   duration = 0
 ) => {

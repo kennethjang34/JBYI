@@ -15,7 +15,7 @@ const searchResult = (
 ) => {
   var accounts = null;
   axios
-    .get(`http://127.0.0.1:8000/account/api/accounts?search=${accountID}`, {
+    .get(`http://127.0.0.1:8000/account/api/accounts?userID=${accountID}`, {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
@@ -46,14 +46,7 @@ const searchResult = (
                   }}
                   key={account}
                 >
-                  <span>
-                    {/* // href={`https://www.naver.com`}
-                                            // target="_blank"
-                                            rel="noopener noreferrer"
-                                            // onClick={() => { */}
-                    {/* // handleSelected(account); // }} */}
-                    {account}
-                  </span>{" "}
+                  <span>{account}</span>{" "}
                   <Button
                     onClick={() => {
                       sendFriendRequest(currentUser, account);
@@ -61,7 +54,6 @@ const searchResult = (
                   >
                     Request Friendship
                   </Button>
-                  {/* {/* <span>{getRandomInt(200, 100)} results</span> */}
                 </div>
               ),
             };

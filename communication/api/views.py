@@ -58,24 +58,21 @@ def get_account(username):
 class AccountList(ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = AccountSerializer
-    queryset = Account.objects.all()
-    filter_backends = [filters.SearchFilter]
-    search_fields = ["userID"]
+    #filter_backends = [filters.SearchFilter]
+    #search_fields = ["userID"]
     # def get(self, request, *args, **kwargs):
     #     return self.list(request, *args, **kwargs)
 
+    def get_queryset(self):
+        return Account.objects.filter(userID__contains=self.request.query_params.get("userID"))
 
 class FriendsList(ListAPIView):
-    # queryset = Account.following.all()
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = AccountSerializer
-    # filter_backends = [filters.SearchFilter]
-    # search_fields = ["username"]
 
     def get_queryset(self):
         if self.request.user.username != self.request.query_params.get("userID"):
             raise permissions.exceptions.PermissionDenied("Permission Denied")
-        # print(self.request.query_params.get("userID"))
         return get_account(self.request.query_params.get("userID")).following.all()
 
 

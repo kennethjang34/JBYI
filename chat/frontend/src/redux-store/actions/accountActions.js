@@ -9,7 +9,7 @@ export const sendFriendRequestAction = (requester, receiver) => {
   return (dispatch) => {
     axios
       .post(
-        "http://127.0.0.1:8000/account/api/add-friend",
+        "http://127.0.0.1:8000/account/api/friend-requests/",
         {
           requester: requester,
           receiver: receiver,

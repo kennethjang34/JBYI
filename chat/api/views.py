@@ -39,7 +39,7 @@ def get_user_account(user):
 # list all chat rooms of this user if there is any. For a particular chat room view, use ChatRetrieve
 class ChatList(ListAPIView):
     # queryset = Chat.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, )
     serializer_class = ChatSerializer
 
     def get_queryset(self):
@@ -55,7 +55,7 @@ class ChatList(ListAPIView):
 
 class ChatCreate(CreateAPIView):
     queryset = Chat.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, )
     serializer_class = ChatSerializer
 
     # def get_queryset(self):
@@ -67,7 +67,7 @@ class ChatCreate(CreateAPIView):
 
 class ChatRetrieve(RetrieveAPIView):
     queryset = Chat.objects.all().filter()
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, )
     serializer_class = ChatSerializer
 
     # def get_queryset(self):
@@ -81,7 +81,7 @@ class ChatRetrieve(RetrieveAPIView):
 
 class ChatUpdate(UpdateAPIView):
     queryset = Chat.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, )
     serializer_class = ChatSerializer
 
     # def get_queryset(self):
@@ -95,7 +95,7 @@ class ChatUpdate(UpdateAPIView):
 
 class ChatDelete(UpdateAPIView):
     queryset = Chat.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, )
     serializer_class = ChatSerializer
 
     # def get_queryset(self):

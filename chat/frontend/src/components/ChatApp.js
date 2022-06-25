@@ -105,8 +105,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       openInvitationNotification(
         "New Friend Request",
         `${friendRequest.requester} wants to be your new friend!`,
-        () => {},
-        () => {},
+        () => {
+          return dispatch(
+            accountActions.sendInvitationResponse(friendRequest.id, true)
+          );
+        },
+        () => {
+          return dispatch(
+            accountActions.sendInvitationResponse(friendRequest.id, false)
+          );
+        },
         TOP_RIGHT
       );
       return dispatch(

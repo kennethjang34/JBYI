@@ -24,19 +24,27 @@ def pkgen():
 
 class Account(models.Model):
     userID = models.CharField(max_length=15, primary_key=True, default=pkgen)
-    user = models.OneToOneField(User, related_name="account", on_delete=models.CASCADE, blank=True)
-    following = models.ManyToManyField(
-            "Account",
-            related_name="followers",
-            blank=True )
+    user = models.OneToOneField(User,
+                                related_name="account",
+                                on_delete=models.CASCADE,
+                                blank=True)
+    following = models.ManyToManyField("Account",
+                                       related_name="followers",
+                                       blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     channel_name = models.CharField(max_length=100, default="")
 
-    def __str__(self): return self.userID # called whenever there is a new user 
-    @receiver(post_save, sender=get_user_model()) 
-    def create_account(sender, instance, created, **kwargs): 
-        if created: account = Account.objects.create(userID=instance.username, user=instance)
+    # called whenever there is a new user
+    def __str__(self):
+        return self.userID
+
+    @receiver(post_save, sender=get_user_model())
+    def create_account(sender, instance, created, **kwargs):
+        if created:
+            account = Account.objects.create(userID=instance.username,
+                                             user=instance)
             # no friends !
+
     @property
     def group_name(self):
         """
@@ -49,17 +57,33 @@ class Account(models.Model):
 
 
 class FriendRequest(models.Model):
-    requester = models.ForeignKey(Account, related_name="friend_requests_sent", on_delete=models.CASCADE)
-    receiver = models.ForeignKey(Account, related_name="friend_requests_received", on_delete=models.CASCADE)
+    requester = models.ForeignKey(Account,
+                                  related_name="friend_requests_sent",
+                                  on_delete=models.CASCADE)
+    receiver = models.ForeignKey(Account,
+                                 related_name="friend_requests_received",
+                                 on_delete=models.CASCADE)
     accepted = models.BooleanField(blank=True, null=True, default=None)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "Requester: " + self.requester.__str__() + ", Receiver: " + self.receiver.__str__()
+        return "Requester: " + self.requester.__str__(
+        ) + ", Receiver: " + self.receiver.__str__()
 
     def clean(self):
-        if self.accepted==None and (FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=None).exists() or FriendRequest.objects.filter(requester=self.requester, receiver=self.receiver, accepted=None).exists() or FriendRequest.objects.filter(requester=self.requester, receiver=self.receiver, accepted=True).exists() or FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=True).exists()):
-            print(FriendRequest.objects.filter(requester=self.receiver, receiver=self.requester, accepted=None).exists())
+        if self.accepted == None and (
+                FriendRequest.objects.filter(requester=self.receiver,
+                                             receiver=self.requester,
+                                             accepted=None).exists()
+                or FriendRequest.objects.filter(requester=self.requester,
+                                                receiver=self.receiver,
+                                                accepted=None).exists()
+                or FriendRequest.objects.filter(requester=self.requester,
+                                                receiver=self.receiver,
+                                                accepted=True).exists()
+                or FriendRequest.objects.filter(requester=self.receiver,
+                                                receiver=self.requester,
+                                                accepted=True).exists()):
             raise ValidationError("The requested friendship is duplicate")
 
     def save(self, *args, **kwargs):
@@ -74,62 +98,50 @@ class FriendRequest(models.Model):
         if instance.accepted == True:
             requester.following.add(receiver)
             receiver.following.add(requester)
-            channel_layer = channels.layers.get_channel_layer()    
+            channel_layer = channels.layers.get_channel_layer()
             requester_group_name = requester.group_name
             receiver_group_name = receiver.group_name
             async_to_sync(channel_layer.group_send)(
-                    requester_group_name,
-                    {
-                        "type": "notify",
-                        "message": {
-                            "message_type": "friend_request_accepted",
-                            "friend": AccountSerializer(receiver).data,
-                            },
-                        },
-                    )
-
-
-           # async_to_sync(channel_layer.group_send)(
-           #         receiver_group_name,
-           #         {
-           #             "type": "notify",
-           #             "message": {
-           #                 "message_type": "friend_request_accepted",
-           #                 "friend": accountserializer(requester).data,
-           #                 },
-           #             },
-           #         )
+                requester_group_name,
+                {
+                    "type": "notify",
+                    "message": {
+                        "message_type": "friend_request_accepted",
+                        "friend": AccountSerializer(receiver).data,
+                    },
+                },
+            )
 
         elif instance.accepted == False:
             pass
-        else:            
-            channel_layer = channels.layers.get_channel_layer()    
+        else:
+            channel_layer = channels.layers.get_channel_layer()
             requester_group_name = requester.group_name
             receiver_group_name = receiver.group_name
             from communication.api.serializers import FriendRequestSerializer
             async_to_sync(channel_layer.group_send)(
-                    receiver_group_name,
-                    {
-                        "type": "notify",
-                        "message": {
-                            "message_type": "friend_request_received",
-                            "friend_request": FriendRequestSerializer(instance).data,
-                            },
-                        },
-                    )
-
+                receiver_group_name,
+                {
+                    "type": "notify",
+                    "message": {
+                        "message_type": "friend_request_received",
+                        "friend_request":
+                        FriendRequestSerializer(instance).data,
+                    },
+                },
+            )
 
     class Meta:
-        constraints = [
-                constraints.UniqueConstraint(
-                    fields=['requester', 'receiver','accepted'], name="unique_friend_request"
-                    ),
-                models.CheckConstraint(
-                    name="prevent_self_follow",
-                    check=~models.Q(requester=models.F("receiver")),
-                    )
-                ]
 
+        constraints = [
+            constraints.UniqueConstraint(
+                fields=['requester', 'receiver', 'accepted'],
+                name="unique_friend_request"),
+            models.CheckConstraint(
+                name="prevent_self_follow",
+                check=~models.Q(requester=models.F("receiver")),
+            )
+        ]
 
 
 post_save.connect(FriendRequest.post_save, sender=FriendRequest)

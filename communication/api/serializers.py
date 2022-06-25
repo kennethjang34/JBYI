@@ -20,15 +20,26 @@ class AccountSerializer(serializers.ModelSerializer):
         # fields = ("userID", "user", "following", "followers", "timestamp")
         fields = ("userID", "user", "friends", "timestamp")
 
-
-
 class FriendRequestSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     requester = serializers.SlugRelatedField(slug_field="userID", queryset=Account.objects.all())
     receiver = serializers.SlugRelatedField(slug_field="userID", queryset=Account.objects.all())
-    #receiver = serializers.CharField(source="receiver.userID", read_only=True)
-    #requester = serializers.PrimaryKeyRelatedField(many=False, queryset=Account.objects.all())
-    #receiver = serializers.PrimaryKeyRelatedField(many=False, queryset=Account.objects.all())
-    #requester = serializers.CharField(source="requester.userID", read_only=True)
+    lookup_field = 'id'
+    def create(self, validated_data):
+        return FriendRequest.objects.create(**validated_data)
+
+
+#    def update(self,instance,validated_data):
+#
+#        return super().update(self,instance,validated_data)
+#
+
+    #def update(self, instance, validated_data):
+     #   print("inside serializers")
+      #  print(validated_data)
+        #instance.save()
+       # return instance
+    
     class Meta:
         model = FriendRequest
         fields = '__all__'

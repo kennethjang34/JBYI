@@ -23,6 +23,7 @@ export const openInvitationNotification = (
       <div>
         <Button
           onClick={() => {
+            acceptCallback();
             notification.close(key);
           }}
         >
@@ -31,6 +32,7 @@ export const openInvitationNotification = (
 
         <Button
           onClick={() => {
+            declineCallback();
             notification.close(key);
           }}
         >

@@ -2,12 +2,14 @@ from functools import partial
 from django.contrib.auth import get_user_model
 from django.http import QueryDict
 from django.shortcuts import get_object_or_404
-from requests import Response
+#from requests import Response
+from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework import filters
-
+from rest_framework import status
 from rest_framework.generics import (
     ListAPIView,
+    RetrieveUpdateAPIView,
     RetrieveAPIView,
     CreateAPIView,
     DestroyAPIView,
@@ -46,31 +48,28 @@ def get_account_from_user(user):
 def get_account(username):
     return get_account_from_user(get_user(username))
 
-
-# def FollowingList(ListAPIView):
-#     pass
-
-
-# def FollowersList(ListAPIView):
-#     pass
-
-
-class AccountList(ListAPIView):
+class AccountRetrieveUpdateView(RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = AccountSerializer
-    #filter_backends = [filters.SearchFilter]
-    #search_fields = ["userID"]
-    # def get(self, request, *args, **kwargs):
-    #     return self.list(request, *args, **kwargs)
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
     def get_queryset(self):
         return Account.objects.filter(userID__contains=self.request.query_params.get("userID"))
 
-class FriendsList(ListAPIView):
+class AccountListView(ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = AccountSerializer
 
     def get_queryset(self):
+        return Account.objects.filter(userID__contains=self.request.query_params.get("userID"))
+
+class FriendsListView(ListAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = AccountSerializer
+
+    def get_queryset(self):
+        print(self.request.query_params.get("userID"))
         if self.request.user.username != self.request.query_params.get("userID"):
             raise permissions.exceptions.PermissionDenied("Permission Denied")
         return get_account(self.request.query_params.get("userID")).following.all()
@@ -84,6 +83,7 @@ class FriendsUpdate(CreateAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+        instance.field = request.value
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -101,7 +101,31 @@ class FriendRequestCreate(CreateAPIView):
     
    #get_queryset(self):
        
+class FriendRequestRetrieveUpdateView(RetrieveUpdateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = FriendRequestSerializer
+    queryset = FriendRequest.objects.all()
+    
+    model=FriendRequest
+    fields=['op','field','value']
 
+    def partial_update(self,request, *args, **kwargs):
+        instance = FriendRequest.objects.get(pk=kwargs['pk'])
+        data = {request.data['field']: request.data['value'], 'id': kwargs['pk']}
+        #in FriendRequestSerializer(), try adding id of the request
+        serializer = FriendRequestSerializer(instance, data=data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+#    def patch(self, request, *args, **kwargs):
+#
+#        return self.partial_update(request, *args, **kwargs)
+
+   # def get_queryset(self):
+   #     return Account.objects.filter(userID__contains=self.request.query_params.get("userID"))
 
 # list all chat rooms of this user if there is any. For a particular chat room view, use ChatRetrieve
 

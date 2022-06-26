@@ -19,10 +19,17 @@ const friendRequestReceived = (state, action) => {
   };
 };
 
-const load_friends = (state, action) => {
+const loadFriends = (state, action) => {
   return {
     ...state,
     friends: action.friends,
+  };
+};
+const logout = (state, action) => {
+  localStorage.removeItem("friends");
+  return {
+    ...state,
+    friends: null,
   };
 };
 export default reducer = (state = initialState, action) => {
@@ -32,7 +39,10 @@ export default reducer = (state = initialState, action) => {
     case actionTypes.FRIEND_REQUEST_RECEIVED:
       return friendRequestReceived(state, action);
     case actionTypes.LOAD_FRIENDS:
-      return load_friends(state, action);
+      return loadFriends(state, action);
+
+    case actionTypes.LOGOUT:
+      return logout(state, action);
     default:
       return state;
   }

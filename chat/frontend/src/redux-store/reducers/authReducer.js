@@ -63,8 +63,6 @@ export default reducer = (state = initialState, action) => {
       return login_fail(state, action);
     case actionTypes.LOGOUT:
       return logout(state, action);
-    //    case actionTypes.LOAD_FRIENDS:
-    //      return load_friends(state, action);
     default:
       return state;
   }

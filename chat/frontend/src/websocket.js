@@ -1,3 +1,4 @@
+//
 import { connect } from "react-redux";
 
 const baseURLForWebsocket = "ws://127.0.0.1:8000/ws/chat";
@@ -94,6 +95,7 @@ export class WebSocketServer {
   socketMessageHandler = (data) => {
     const parsedData = JSON.parse(data);
     const messageType = parsedData.message_type;
+    const friend = parsedData.friend;
     switch (messageType) {
       case "previous_messages":
         const messages = parsedData.messages.map((jsonString) =>
@@ -114,7 +116,10 @@ export class WebSocketServer {
         this.newFriendRequestHandler(parsedData["friend_request"]);
         break;
       case "friend_request_accepted":
-        const friend = parsedData.friend;
+        this.newFriendhandler(friend);
+        break;
+
+      case "friend_request_resolved":
         this.newFriendhandler(friend);
         break;
     }

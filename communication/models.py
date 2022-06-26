@@ -111,6 +111,17 @@ class FriendRequest(models.Model):
                     },
                 },
             )
+            async_to_sync(channel_layer.group_send)(
+                receiver_group_name,
+                {
+                    "type": "notify",
+                    "message": {
+                       #Here, the message_type is different from the one for the requester.
+                        "message_type": "friend_request_resolved",
+                        "friend": AccountSerializer(requester).data,
+                    },
+                },
+            )
 
         elif instance.accepted == False:
             pass

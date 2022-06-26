@@ -36,25 +36,6 @@ class Message(models.Model):
         return self.messageID
 
 
-# class Account(models.Model):
-#     userID = models.CharField(max_length=15, primary_key=True, default=pkgen)
-#     user = models.OneToOneField(User, related_name="account", on_delete=models.CASCADE)
-#     following = models.ManyToManyField(
-#         "Account",
-#         related_name="followers",
-#     )
-#     timestamp = models.DateTimeField(auto_now_add=True)
-#     channel_name = models.CharField(max_length=100, default="")
-
-#     def __str__(self):
-#         return self.userID
-
-#     # called whenever there is a new user
-#     @receiver(post_save, sender=get_user_model())
-#     def create_account(sender, instance, created, **kwargs):
-#         if created:
-#             account = Account.objects.create(userID=instance.username, user=instance)
-#             # no friends !
 
 
 class Chat(models.Model):

@@ -18,12 +18,21 @@ const friendRequestReceived = (state, action) => {
     friendRequests: [...friendRequests],
   };
 };
+
+const load_friends = (state, action) => {
+  return {
+    ...state,
+    friends: action.friends,
+  };
+};
 export default reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.FRIEND_ADDED:
       return friendAdded(state, action);
     case actionTypes.FRIEND_REQUEST_RECEIVED:
       return friendRequestReceived(state, action);
+    case actionTypes.LOAD_FRIENDS:
+      return load_friends(state, action);
     default:
       return state;
   }

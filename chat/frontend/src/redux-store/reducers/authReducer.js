@@ -14,7 +14,7 @@ const login_success = (state, action) => {
     ...state,
     token: action.token,
     currentUser: action.currentUser,
-    friends: null,
+    //friends: null,
     loading: false,
     error: null,
   };
@@ -46,12 +46,12 @@ const logout = (state, action) => {
   };
 };
 
-const load_friends = (state, action) => {
-  return {
-    ...state,
-    friends: action.friends,
-  };
-};
+//const load_friends = (state, action) => {
+//  return {
+//    ...state,
+//    friends: action.friends,
+//  };
+//};
 
 export default reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -63,8 +63,8 @@ export default reducer = (state = initialState, action) => {
       return login_fail(state, action);
     case actionTypes.LOGOUT:
       return logout(state, action);
-    case actionTypes.LOAD_FRIENDS:
-      return load_friends(state, action);
+    //    case actionTypes.LOAD_FRIENDS:
+    //      return load_friends(state, action);
     default:
       return state;
   }

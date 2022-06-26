@@ -189,7 +189,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 chats = await sync_to_async(chat_objs.filter)(pk__in=message["chatID"])
             else:
                 chats = await sync_to_async(chat_objs.filter)(pk=message["chatID"])
-
             messageObj = await sync_to_async(Message.objects.create)(
                 author=account, content=message["content"]
             )

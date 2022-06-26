@@ -32,13 +32,6 @@ def get_user(username):
     return None
 
 
-# # maybe not needed
-# def get_chat_rooms(username):
-#     # queryset = Chat.objects.all()
-#     if username is not None:
-#         account = get_user_account(username)
-#         return account.chats.all()
-#     return None
 
 
 def get_account_from_user(user):
@@ -99,7 +92,6 @@ class FriendRequestCreate(CreateAPIView):
     serializer_class = FriendRequestSerializer
     queryset = FriendRequest.objects.all()
     
-   #get_queryset(self):
        
 class FriendRequestRetrieveUpdateView(RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -120,82 +112,3 @@ class FriendRequestRetrieveUpdateView(RetrieveUpdateAPIView):
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
-#    def patch(self, request, *args, **kwargs):
-#
-#        return self.partial_update(request, *args, **kwargs)
-
-   # def get_queryset(self):
-   #     return Account.objects.filter(userID__contains=self.request.query_params.get("userID"))
-
-# list all chat rooms of this user if there is any. For a particular chat room view, use ChatRetrieve
-
-
-# list all chat rooms of this user if there is any. For a particular chat room view, use ChatRetrieve
-# class ChatList(ListAPIView):
-#     # queryset = Chat.objects.all()
-#     permission_classes = (permissions.IsAuthenticated,)
-#     serializer_class = ChatSerializer
-
-#     def get_queryset(self):
-#         return get_user_account(self.request.user).chats.all()
-# return get_chat_rooms(username)
-
-# def get(self, request, *args, **kwargs):
-#     return self.list(request, *args, **kwargs)
-
-
-# class ChatDetail(APIView):
-
-
-# class ChatCreate(CreateAPIView):
-#     queryset = Chat.objects.all()
-#     permission_classes = (permissions.IsAuthenticated,)
-#     serializer_class = ChatSerializer
-
-# def get_queryset(self):
-#     self.request.query_params.get
-# username = self.request.query_params.get("username", None)
-# chat_rooms = get_chat_rooms(username)
-# return chat_rooms
-
-
-# class ChatRetrieve(RetrieveAPIView):
-#     queryset = Chat.objects.all().filter()
-#     permission_classes = (permissions.IsAuthenticated,)
-#     serializer_class = ChatSerializer
-
-# def get_queryset(self):
-#     username = self.request.query_params.get("username", None)
-#     # query_params.get("id", []) must return a list of id's
-#     chat_rooms = get_chat_rooms(username).filter(
-#         pk__in=self.request.query_params.get("id", [])
-#     )
-#     return chat_rooms
-
-
-# class ChatUpdate(UpdateAPIView):
-#     queryset = Chat.objects.all()
-#     permission_classes = (permissions.IsAuthenticated,)
-#     serializer_class = ChatSerializer
-
-# def get_queryset(self):
-#     # queryset = Chat.objects.all()
-#     username = self.request.query_params.get("username", None)
-#     if username is not None:
-#         account = get_user_account(username)
-#         return account.chats.all()
-#     return None
-
-
-# class ChatDelete(UpdateAPIView):
-#     queryset = Chat.objects.all()
-#     permission_classes = (permissions.IsAuthenticated,)
-#     serializer_class = ChatSerializer
-
-# def get_queryset(self):
-#     # queryset = Chat.objects.all()
-#     username = self.request.query_params.get("username", None)
-#     if username is not None:
-#         account = get_user_account(username)
-#         return account.chats.all()
-#     return None

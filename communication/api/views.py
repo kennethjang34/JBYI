@@ -87,7 +87,7 @@ class FriendsUpdate(CreateAPIView):
 
 
 
-class FriendRequestCreate(CreateAPIView):
+class FriendRequestCreateView(CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = FriendRequestSerializer
     queryset = FriendRequest.objects.all()

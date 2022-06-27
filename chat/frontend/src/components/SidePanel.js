@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import * as chatActions from "../redux-store/actions/chatActions";
 import * as authActions from "../redux-store/actions/authActions";
-import Modal from "react-modal";
 import { Popover, Button } from "antd";
 import ChatPrompter from "./ChatPrompter";
 import AddFriendPrompter from "./AddFriendPrompter";
@@ -66,7 +65,8 @@ class SidePanel extends React.Component {
   renderChats = () => {
     const chats = this.props.chats;
     const chats_rendered = Object.keys(chats).map((chatID, index) => {
-      const chat = chats[chatID];
+      const chat = { ...chats[chatID] };
+      const messages = chats[chatID] ? [...chats[chatID].messages] : [];
       const usernames = [...this.getUserNamesTrimmed(chat["participants"])];
 
       return (
@@ -74,6 +74,7 @@ class SidePanel extends React.Component {
           {/* <a className="list-group-item media" href={""} key={chatID}> */}
           <div className="pull-left">
             <img
+              style={{ width: "100%" }}
               src="https://bootdey.com/img/Content/avatar/avatar2.png"
               alt=""
             />
@@ -88,12 +89,7 @@ class SidePanel extends React.Component {
               {usernames}
             </button>
             <small className="list-group-item-text c-gray" key={chatID}>
-              {chat &&
-              chat.messages &&
-              chat.messages.length > 0 &&
-              chat.messages.reverse()
-                ? chat.messages.reverse()[0].content
-                : ""}
+              {messages.reverse() ? messages[0].content : ""}
             </small>
           </div>
         </div>
@@ -129,7 +125,6 @@ class SidePanel extends React.Component {
                 {this.props.currentUser}
                 <button
                   className="logoutButton"
-                  // href=""
                   type="text"
                   onClick={this.props.logout}
                 >

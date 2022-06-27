@@ -11,11 +11,11 @@ const initialState = {
 };
 
 const addMessage = (state, action) => {
-  const chat = state.chats[action.chatID];
+  const chat = { ...state.chats[action.chatID] };
   const messages = [...chat.messages, action.message];
-
   const chats = { ...state.chats };
-  chats[action.chatID].messages = messages;
+  chat.messages = messages;
+  chats[action.chatID] = chat;
   return { ...state, chats: chats };
 };
 

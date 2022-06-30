@@ -123,6 +123,9 @@ class SidePanel extends React.Component {
 							<div>
 								Signed in as <br />
 								{this.props.currentUser}
+								<button className="friendsRequestButton" type="text" >
+									<i className="fa-solid fa-user-plus"></i>
+								</button>
 								<button
 									className="logoutButton"
 									type="text"

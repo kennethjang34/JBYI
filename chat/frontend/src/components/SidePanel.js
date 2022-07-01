@@ -2,18 +2,20 @@ import React from "react";
 import {connect} from "react-redux";
 import * as chatActions from "../redux-store/actions/chatActions";
 import * as authActions from "../redux-store/actions/authActions";
-import {Popover, Button} from "antd";
+import {Drawer, Popover, Button} from "antd";
 import ChatPrompter from "./ChatPrompter";
 import AddFriendPrompter from "./AddFriendPrompter";
+import {FriendRequestList, FriendList} from "./Lists";
 class SidePanel extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			chatPrompterOpen: false,
 			addFriendPrompterOpen: false,
+			friendRequestsVisible: false,
+			friendsVisible: false
 		};
 	}
-
 	openAddFriendPrompter = () => {
 		this.setState({
 			addFriendPrompterOpen: true,
@@ -36,7 +38,6 @@ class SidePanel extends React.Component {
 			chatPrompterOpen: false,
 		});
 	};
-
 	getUserNamesTrimmed = (usernames) => {
 		if (usernames) {
 			const trimmed = usernames.map((user, index) => {
@@ -62,6 +63,61 @@ class SidePanel extends React.Component {
 		this.props.addFriend(event.target.value);
 	};
 
+	FriendListDrawer = (props) => {
+
+		const showDrawer = () => {props.changeVisibility(true)}
+
+		const onChange = (e) => {
+			setPlacement(e.target.value);
+		};
+
+		const onClose = () => {
+			props.changeVisibility(false)
+		}
+		return (<Drawer
+			title="Friends"
+			placement={"left"}
+			width={400}
+			onClose={onClose}
+			visible={props.visible}
+			extra={
+				<div>
+					<Button onClick={onClose}>Cancel</Button>
+					<Button type="primary" onClick={onClose}>
+						OK
+					</Button>
+				</div>
+			}
+		><FriendList />      </Drawer>
+
+		)
+	}
+
+	FriendRequestListDrawer = (props) => {
+		const showDrawer = () => {props.changeVisibility(true)}
+
+		const onChange = (e) => {
+			setPlacement(e.target.value);
+		};
+
+		const onClose = () => {props.changeVisibility(false)}
+		return (<Drawer
+			title="Friend Requests"
+			placement="left"
+			width={400}
+			onClose={onClose}
+			visible={props.visible}
+			extra={
+				<div>
+					<Button onClick={onClose}>Cancel</Button>
+					<Button type="primary" onClick={onClose}>
+						OK
+					</Button>
+				</div>
+			}
+		>     <FriendRequestList /></Drawer>
+		)
+	}
 	renderChats = () => {
 		const chats = this.props.chats;
 		const chats_rendered = Object.keys(chats).map((chatID, index) => {
@@ -111,6 +167,8 @@ class SidePanel extends React.Component {
 		};
 		return (
 			<div id="sidepanel">
+				<this.FriendRequestListDrawer changeVisibility={(val) => {this.setState({friendRequestsVisible: val})}} visible={this.state.friendRequestsVisible} />
+				<this.FriendListDrawer changeVisibilit={(val) => {this.setState({friendsVisible: val})}} visible={this.state.friendsVisible} />
 				{/* //  <div className="container bootstrap snippets bootdey"> */}
 				<div className="tile tile-alt" id="messages-main">
 					<div className="ms-menu">
@@ -123,7 +181,7 @@ class SidePanel extends React.Component {
 							<div>
 								Signed in as <br />
 								{this.props.currentUser}
-								<button className="friendsRequestButton" type="text" >
+								<button className="friendsRequestButton" onClick={() => {this.setState({friendRequestsVisible: true})}}>
 									<i className="fa-solid fa-user-plus"></i>
 								</button>
 								<button
@@ -135,7 +193,6 @@ class SidePanel extends React.Component {
 								</button>
 							</div>
 						</div>
-
 						<div className="p-15">
 							<button
 								className="btn btn-primary btn-block"
@@ -262,15 +319,14 @@ const mapDispatchToProps = (dispatch) => {
 		selectChat: (chatID) => {
 			return dispatch(chatActions.selectChat(chatID));
 		},
-		logout: () => {
-			// navigate.push("/login");
+		ogout: () => {
 			dispatch(authActions.logoutAction);
 			dispatch(chatActions.selectChat(null));
 		},
-		createChat: (participants) => {
+		reateChat: (participants) => {
 			dispatch(chatActions.createChatAction(participants));
 		},
-		addFriend: (friend) => {
+		ddFriend: (friend) => {
 			dispatch();
 		},
 	};

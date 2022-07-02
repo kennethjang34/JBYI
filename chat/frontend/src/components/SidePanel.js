@@ -319,14 +319,14 @@ const mapDispatchToProps = (dispatch) => {
 		selectChat: (chatID) => {
 			return dispatch(chatActions.selectChat(chatID));
 		},
-		ogout: () => {
+		logout: () => {
 			dispatch(authActions.logoutAction);
 			dispatch(chatActions.selectChat(null));
 		},
-		reateChat: (participants) => {
+		createChat: (participants) => {
 			dispatch(chatActions.createChatAction(participants));
 		},
-		ddFriend: (friend) => {
+		addFriend: (friend) => {
 			dispatch();
 		},
 	};

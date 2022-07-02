@@ -14,6 +14,7 @@ from rest_framework.generics import (
     CreateAPIView,
     DestroyAPIView,
     UpdateAPIView,
+    ListCreateAPIView
 )
 
 from .serializers import AccountSerializer
@@ -87,7 +88,7 @@ class FriendsUpdate(CreateAPIView):
 
 
 
-class FriendRequestCreateView(CreateAPIView):
+class FriendRequestCreateView(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = FriendRequestSerializer
     queryset = FriendRequest.objects.all()

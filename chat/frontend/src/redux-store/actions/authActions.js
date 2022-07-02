@@ -133,7 +133,6 @@ export const setLogOutTimer = (timeGiven) => {
 };
 
 export const checkAuthAction = (dispatch, getState) => {
-	const state = getState();
 	const currentUser = localStorage.getItem("currentUser");
 	const token = localStorage.getItem("token");
 	// if (currentUser !== undefined && currentUser !== null) {
@@ -158,4 +157,8 @@ export const checkAuthAction = (dispatch, getState) => {
 		} else {
 			dispatch(setLogOutTimer(expirationTime.getTime() - new Date().getTime()));
 		}
-		;
+	}
+}
+
+
+

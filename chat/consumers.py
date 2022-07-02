@@ -223,7 +223,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message_arrive(self, event):
         await self.send(text_data=json.dumps(event["message"]))
 
-
 m2m_changed.connect(
     receiver=ChatConsumer.create_new_group, sender=Chat.participants.through
 )

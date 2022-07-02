@@ -2,7 +2,7 @@ from aioredis import AuthError
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.db.models import constraints
 from django.core.exceptions import ValidationError
 from asgiref.sync import async_to_sync
@@ -66,9 +66,9 @@ class FriendRequest(models.Model):
     accepted = models.BooleanField(blank=True, null=True, default=None)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return "Requester: " + self.requester.__str__(
-        ) + ", Receiver: " + self.receiver.__str__()
+   # def __str__(self):
+   #     return "Requester: " + self.requester.__str__(
+   #     ) + ", Receiver: " + self.receiver.__str__()
 
     def clean(self):
         if self.accepted == None and (
@@ -88,44 +88,57 @@ class FriendRequest(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
+        if (self.pk and FriendRequest.objects.get(pk=self.pk).accepted != self.accepted): 
+            update_fields = []
+            update_fields.append("accepted")
+            return super().save(update_fields=update_fields,*args, **kwargs)
+
         return super().save(*args, **kwargs)
+    #@staticmethod
+   # def pre_save(sender, instance, *args, **kwargs):
+   #     print("in pre_save")
+   #     print(kwargs)
+   #     print(dir(instance))
+        
 
     @staticmethod
     def post_save(sender, instance, created, **kwargs):
         requester = Account.objects.get(userID=instance.requester)
         receiver = Account.objects.get(userID=instance.receiver)
+        update_fields = kwargs.pop("update_fields")
         from communication.api.serializers import AccountSerializer
-        if instance.accepted == True:
-            requester.following.add(receiver)
-            receiver.following.add(requester)
-            channel_layer = channels.layers.get_channel_layer()
-            requester_group_name = requester.group_name
-            receiver_group_name = receiver.group_name
-            async_to_sync(channel_layer.group_send)(
-                requester_group_name,
-                {
-                    "type": "notify",
-                    "message": {
-                        "message_type": "friend_request_accepted",
-                        "friend": AccountSerializer(receiver).data,
+        if update_fields and "accepted" in update_fields:
+            if instance.accepted == True:
+                requester.following.add(receiver)
+                receiver.following.add(requester)
+                channel_layer = channels.layers.get_channel_layer()
+                requester_group_name = requester.group_name
+                receiver_group_name = receiver.group_name
+                async_to_sync(channel_layer.group_send)(
+                    requester_group_name,
+                    {
+                        "type": "notify",
+                        "message": {
+                            "message_type": "friend_request_accepted",
+                            "friend": AccountSerializer(receiver).data,
+                        },
                     },
-                },
-            )
-            async_to_sync(channel_layer.group_send)(
-                receiver_group_name,
-                {
-                    "type": "notify",
-                    "message": {
-                       #Here, the message_type is different from the one for the requester.
-                        "message_type": "friend_request_resolved",
-                        "friend": AccountSerializer(requester).data,
+                )
+                async_to_sync(channel_layer.group_send)(
+                    receiver_group_name,
+                    {
+                        "type": "notify",
+                        "message": {
+                           #Here, the message_type is different from the one for the requester.
+                            "message_type": "friend_request_resolved",
+                            "friend": AccountSerializer(requester).data,
+                        },
                     },
-                },
-            )
+                )
 
-        elif instance.accepted == False:
-            pass
-        else:
+            elif instance.accepted == False:
+                pass
+        elif created:
             channel_layer = channels.layers.get_channel_layer()
             requester_group_name = requester.group_name
             receiver_group_name = receiver.group_name
@@ -154,5 +167,5 @@ class FriendRequest(models.Model):
             )
         ]
 
-
+#pre_save.connect(FriendRequest.pre_save, sender=FriendRequest)
 post_save.connect(FriendRequest.post_save, sender=FriendRequest)

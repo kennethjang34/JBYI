@@ -297,6 +297,7 @@ class SidePanel extends React.Component {
 								</ul>
 							</div>
 						</div>
+						<div><FriendList /></div>
 
 						<div className="list-group lg-alt">{this.renderChats()}</div>
 					</div>

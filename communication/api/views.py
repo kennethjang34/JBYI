@@ -88,7 +88,7 @@ class FriendsUpdate(CreateAPIView):
 
 
 
-class FriendRequestCreateView(ListCreateAPIView):
+class FriendRequestListCreateView(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = FriendRequestSerializer
     queryset = FriendRequest.objects.all()
@@ -105,7 +105,6 @@ class FriendRequestRetrieveUpdateView(RetrieveUpdateAPIView):
     def partial_update(self,request, *args, **kwargs):
         instance = FriendRequest.objects.get(pk=kwargs['pk'])
         data = {request.data['field']: request.data['value'], 'id': kwargs['pk']}
-        #in FriendRequestSerializer(), try adding id of the request
         serializer = FriendRequestSerializer(instance, data=data,partial=True)
         if serializer.is_valid():
             serializer.save()

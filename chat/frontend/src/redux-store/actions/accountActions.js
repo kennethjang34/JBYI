@@ -95,7 +95,22 @@ export const friendRequestReceivedAction = (friendRequest) => {
 		});
 	};
 };
+export const friendRequestResolvedAction = (friendRequest) => {
+	console.log(friendRequest)
+	var existing = localStorage.getItem("friendRequests");
+	var stored_requests = existing == null ? [] : JSON.parse(existing);
+	var new_list = stored_requests.filter((request) => {return request.id !== friendRequest.id});
+	localStorage.setItem(
+		"friendRequests",
+		JSON.stringify([...new_list, friendRequest])
+	);
+	return (dispatch) => {
+		dispatch({
+			type: actionTypes.FRIEND_REQUEST_RECEIVED, friendRequest: friendRequest
+		})
+	}
 
+}
 export const friendAddedAction = (friend) => {
 	var existing = localStorage.getItem("friends");
 	var stored_friends = existing == null ? [] : JSON.parse(existing);

@@ -11,7 +11,6 @@ import {openInvitationNotification, TOP_RIGHT} from "./NotificationPopUp";
 class ChatApp extends React.Component {
 	buildConnection = (userToken) => {
 		const serverInstance = WebSocketServer.getServerInstance(userToken);
-
 		setTimeout(() => {
 			if (serverInstance && serverInstance.isConnectionMade()) {
 				console.log(`Connectionto chat: ${userToken} successfully made`);
@@ -21,7 +20,7 @@ class ChatApp extends React.Component {
 					this.props.addMessage,
 					this.props.chatAdded,
 					this.props.friendAdded,
-					this.props.friendRequestReceived
+					this.props.friendRequestReceived, this.props.friendRequestResolved
 				);
 				Object.keys(this.props.chats).map((chatID) => {
 					serverInstance.sendMessage(chatID, {
@@ -38,8 +37,6 @@ class ChatApp extends React.Component {
 
 	constructor(props) {
 		super(props);
-		//Okay. Is the status of current user still valid?
-		// props.checkAuth();
 
 		this.buildConnection(props.token);
 	}
@@ -122,6 +119,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 		},
 		friendAdded: (newFriendID) => {
 			return dispatch(accountActions.friendAddedAction(newFriendID));
+		},
+		friendRequestResolved: (friendRequest) => {
+			//Removes button from request view	
+			return dispatch(accountActions.friendRequestResolvedAction(friendRequest))
 		},
 	};
 };

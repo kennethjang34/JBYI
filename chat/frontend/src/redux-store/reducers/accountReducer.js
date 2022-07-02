@@ -8,12 +8,20 @@ const friendAdded = (state, action) => {
 };
 
 const friendRequestReceived = (state, action) => {
-	friendRequests = state.friendRequests
-		? [...state.friendRequests, action.friendRequest]
-		: [action.friendRequest];
+	var existing = [...state.friendRequests];
+	var new_list = [];
+	if (existing) {
+		new_list = existing.filter((request) => {return request.id !== action.friendRequest.id})
+		new_list.push(action.friendRequest)
+	}
+	//	var friendRequests = state.friendRequests
+	//
+	//		? [...state.friendRequests, action.friendRequest]
+	//		: [action.friendRequest];
+
 	return {
 		...state,
-		friendRequests: [...friendRequests],
+		friendRequests: new_list,
 	};
 };
 

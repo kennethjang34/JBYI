@@ -22,28 +22,56 @@ export const FriendRequestListComponent = (props) => {
 	return (< List
 		itemLayout="horizontal"
 		dataSource={props.friendRequests ? props.friendRequests : []}
+
 		renderItem={(item) => {
-			let accepted = item.accepted
-			if (accepted === true || accepted === false) {
-				return (
-					<List.Item>
-						<List.Item.Meta
-							avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-							title={<span>{`Friend Request from: ${item.requester}!`}</span>}
-							description={accepted ? "Accepted" : "Declined"}
-						/>
-					</List.Item >
-				)
+			if (item.sent || item.requester === props.currentUser) {
+				let accepted = item.accepted;
+				if (accepted === true || accepted === false) {
+					return (
+						<List.Item>
+							<List.Item.Meta
+								avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+								title={<span>{`Friend Request to: ${item.receiver}!`}</span>}
+								description={accepted ? "Accepted" : "Declined"}
+							/>
+						</List.Item >
+					)
+				} else {
+					return (
+						<List.Item>
+							<List.Item.Meta
+								avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+								title={<span>{`Friend Request to: ${item.receiver}!`}</span>}
+								description={<div>Sent </div>}
+							/>
+						</List.Item>
+					)
+				}
+
+
 			} else {
-				return (
-					<List.Item>
-						<List.Item.Meta
-							avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-							title={<span>{`Friend Request from: ${item.requester}!`}</span>}
-							description={(item.accepted == true || item.accepted == false) ? <div>{`${item.accepted}`}</div> : <div><Button onClick={() => {props.acceptFriendRequest(item.id)}}>Accept</Button><Button onClick={() => {props.declineFriendRequest(item.id)}}>Decline</Button></div>}
-						/>
-					</List.Item>
-				)
+				let accepted = item.accepted;
+				if (accepted === true || accepted === false) {
+					return (
+						<List.Item>
+							<List.Item.Meta
+								avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+								title={<span>{`Friend Request from: ${item.requester}!`}</span>}
+								description={accepted ? "Accepted" : "Declined"}
+							/>
+						</List.Item >
+					)
+				} else {
+					return (
+						<List.Item>
+							<List.Item.Meta
+								avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+								title={<span>{`Friend Request from: ${item.requester}!`}</span>}
+								description={<div><Button onClick={() => {props.acceptFriendRequest(item.id)}}>Accept</Button><Button onClick={() => {props.declineFriendRequest(item.id)}}>Decline</Button></div>}
+							/>
+						</List.Item>
+					)
+				}
 			}
 		}
 		} />
@@ -51,6 +79,7 @@ export const FriendRequestListComponent = (props) => {
 }
 const mapStateToProps = (state) => {
 	return {
+		currentUser: state.auth.currentUser,
 		friends: state.account.friends,
 		friendRequests: state.account.friendRequests
 	};

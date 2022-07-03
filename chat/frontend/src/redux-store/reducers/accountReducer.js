@@ -12,19 +12,13 @@ const friendRequestReceived = (state, action) => {
 	var new_list = [];
 	if (existing) {
 		new_list = existing.filter((request) => {return request.id !== action.friendRequest.id})
-		new_list.push(action.friendRequest)
 	}
-	//	var friendRequests = state.friendRequests
-	//
-	//		? [...state.friendRequests, action.friendRequest]
-	//		: [action.friendRequest];
-
+	new_list.push(action.friendRequest)
 	return {
 		...state,
 		friendRequests: new_list,
 	};
 };
-
 const loadFriends = (state, action) => {
 	return {
 		...state,
@@ -33,6 +27,7 @@ const loadFriends = (state, action) => {
 };
 const logout = (state, action) => {
 	localStorage.removeItem("friends");
+	localStorage.removeItem("friendRequests")
 	return {
 		...state,
 		friends: null,

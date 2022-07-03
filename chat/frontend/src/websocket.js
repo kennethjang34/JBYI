@@ -11,6 +11,9 @@ export class WebSocketServer {
 	newChathandler = null;
 	newFriendhandler = null;
 	newFriendRequestHandler = null;
+	friendRequestResolvedHandler = null;
+	friendRequestSentHandler = null;
+	friendRequestAcceptedHandler = null;
 	socket = null;
 	static getServerInstance(userToken = null) {
 		if (!WebSocketServer.serverInstance) {
@@ -49,7 +52,9 @@ export class WebSocketServer {
 		newChatHandler,
 		newFriendhandler,
 		newFriendRequestHandler,
-		friendRequestResolvedHandler
+		friendRequestResolvedHandler,
+		friendRequestAcceptedHandler,
+		friendRequestSentHandler
 	) {
 		try {
 			this.previousMessagesHandler = previousMessagesHandler;
@@ -58,6 +63,8 @@ export class WebSocketServer {
 			this.newFriendhandler = newFriendhandler;
 			this.newFriendRequestHandler = newFriendRequestHandler;
 			this.friendRequestResolvedHandler = friendRequestResolvedHandler;
+			this.friendRequestAcceptedHandler = friendRequestAcceptedHandler;
+			this.friendRequestSentHandler = friendRequestSentHandler;
 		} catch (error) {
 			console.log(error.message);
 		}
@@ -117,10 +124,16 @@ export class WebSocketServer {
 			case "friend_request_received":
 				this.newFriendRequestHandler(parsedData["friend_request"]);
 				break;
+			//Well, newFriendHandler actually doesn't have to be called separately...
 			case "friend_request_accepted":
+				console.log(friend)
 				this.newFriendhandler(friend);
+				this.friendRequestAcceptedHandler(parsedData["friend_request"]);
 				break;
-
+			//here either
+			case "friend_request_sent_confirmed":
+				this.friendRequestSentHandler(parsedData["friend_request"])
+				break;
 			case "friend_request_resolved":
 				this.newFriendhandler(friend);
 				this.friendRequestResolvedHandler(parsedData["friend_request"]);

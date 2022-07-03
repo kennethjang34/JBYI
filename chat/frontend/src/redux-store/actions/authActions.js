@@ -56,7 +56,7 @@ export const logoutAction = (dispatch, getState) => {
 	localStorage.removeItem("token");
 	//in localStorage, only username field of the user account object available
 	localStorage.removeItem("currentUser");
-	localStorage.removeItem("expirationDate");
+	localStorage.removeItem("expirationTime");
 	dispatch({type: actionTypes.LOGOUT});
 };
 

@@ -106,7 +106,7 @@ class FriendRequest(models.Model):
         requester = Account.objects.get(userID=instance.requester)
         receiver = Account.objects.get(userID=instance.receiver)
         update_fields = kwargs.pop("update_fields")
-        from communication.api.serializers import AccountSerializer
+        from communication.api.serializers import AccountSerializer,FriendRequestSerializer
         if update_fields and "accepted" in update_fields:
             if instance.accepted == True:
                 requester.following.add(receiver)
@@ -120,7 +120,8 @@ class FriendRequest(models.Model):
                         "type": "notify",
                         "message": {
                             "message_type": "friend_request_accepted",
-                            "friend": AccountSerializer(receiver).data,
+                            "friend": AccountSerializer(receiver).data, 
+                            "friend_request": FriendRequestSerializer(instance).data
                         },
                     },
                 )
@@ -157,6 +158,7 @@ class FriendRequest(models.Model):
                     },
                 },
             )
+            async_to_sync(channel_layer.group_send)(requester_group_name,{"type": "notify","message":{"message_type":"friend_request_sent_confirmed","friend_request":FriendRequestSerializer(instance).data}})
 
     class Meta:
 

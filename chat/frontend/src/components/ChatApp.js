@@ -15,12 +15,13 @@ class ChatApp extends React.Component {
 			if (serverInstance && serverInstance.isConnectionMade()) {
 				console.log(`Connectionto chat: ${userToken} successfully made`);
 				serverInstance.setMessageHandlers(
+
 					userToken,
 					this.props.loadMessages,
 					this.props.addMessage,
 					this.props.chatAdded,
 					this.props.friendAdded,
-					this.props.friendRequestReceived, this.props.friendRequestResolved
+					this.props.friendRequestReceived, this.props.friendRequestResolved, this.props.friendRequestAccepted, this.props.friendRequestSent
 				);
 				Object.keys(this.props.chats).map((chatID) => {
 					serverInstance.sendMessage(chatID, {
@@ -124,6 +125,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 			//Removes button from request view	
 			return dispatch(accountActions.friendRequestResolvedAction(friendRequest))
 		},
+		friendRequestAccepted: (friendRequest) => {
+			return dispatch(accountActions.friendRequestAcceptedAction(friendRequest))
+		},
+		friendRequestSent: (friendRequest) => {
+			return dispatch(accountActions.friendRequestSentAction(friendRequest))
+		}
 	};
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ChatApp);

@@ -2,10 +2,13 @@ import React from "react";
 import {connect} from "react-redux";
 import * as chatActions from "../redux-store/actions/chatActions";
 import * as authActions from "../redux-store/actions/authActions";
-import {Drawer, Popover, Button} from "antd";
+import {Drawer, Popover, Button, Segmented} from "antd";
 import ChatPrompter from "./ChatPrompter";
 import AddFriendPrompter from "./AddFriendPrompter";
 import {FriendRequestList, FriendList} from "./Lists";
+export const FRIENDS = "FRIENDS";
+export const FRIEND_REQUESTS = "FRIEND_REQUESTS";
+export const CHATS = "CHATS"
 class SidePanel extends React.Component {
 	constructor(props) {
 		super(props);
@@ -13,7 +16,8 @@ class SidePanel extends React.Component {
 			chatPrompterOpen: false,
 			addFriendPrompterOpen: false,
 			friendRequestsVisible: false,
-			friendsVisible: false
+			friendsVisible: false,
+			listOption: FRIENDS
 		};
 	}
 	openAddFriendPrompter = () => {
@@ -297,9 +301,13 @@ class SidePanel extends React.Component {
 								</ul>
 							</div>
 						</div>
-						<div><FriendList /></div>
 
-						<div className="list-group lg-alt">{this.renderChats()}</div>
+						<div><Segmented options={[FRIENDS, CHATS]} value={this.state.listOption} onChange={(value) => {this.setState({listOption: value})}} />
+
+
+							{this.state.listOption === FRIENDS ? <FriendList /> : <div className="list-group lg-alt">{this.renderChats()}</div>}</div>
+
+						{/*<div className="list-group lg-alt">{this.renderChats()}</div>*/}
 					</div>
 				</div>
 			</div>

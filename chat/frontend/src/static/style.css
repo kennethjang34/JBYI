@@ -287,10 +287,21 @@ body {
 
 button.link { background:none; border:none; }
 
+.friendsRequestButton {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 3px;
+    cursor: pointer;
+    
+
+}
+
 
 .logoutButton {
     position: absolute;
     right: 0;
     padding: 5px;
+    cursor: pointer;
     /* margin-right: 3px; */
 }

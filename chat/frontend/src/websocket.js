@@ -1,114 +1,143 @@
-import { connect } from "react-redux";
+//
+import {connect} from "react-redux";
 
 const baseURLForWebsocket = "ws://127.0.0.1:8000/ws/chat";
 //Don't create server instance directly! Always use getServerInstance(). For singleton pattern
 export class WebSocketServer {
-    static serverInstance = null;
-    sockets = {};
+	static serverInstance = null;
+	sockets = {};
+	previousMessagesHandler = null;
+	newMessageHandler = null;
+	newChathandler = null;
+	newFriendhandler = null;
+	newFriendRequestHandler = null;
+	friendRequestResolvedHandler = null;
+	friendRequestSentHandler = null;
+	friendRequestAcceptedHandler = null;
+	socket = null;
+	static getServerInstance(userToken = null) {
+		if (!WebSocketServer.serverInstance) {
+			WebSocketServer.serverInstance = new WebSocketServer();
+		}
+		if (WebSocketServer.serverInstance.socket === null) {
+			if (userToken === null) {
+				return null;
+			}
+			const url = `${baseURLForWebsocket}/${userToken}/`;
+			// url = `ws://127.0.0.1:8000/ws/chat/${chatID}/`;
+			console.log(`Connection try. URL: ${url}`);
+			WebSocketServer.serverInstance.socket = new WebSocket(url);
+			const socket = WebSocketServer.serverInstance.socket;
+			socket.onopen = () => {
+				console.log(`WebSocket connection successfully made. URL: ${url}`);
+			};
+			socket.onclose = () => {
+				console.log("Connection closed");
+			};
 
-    previousMessagesHandler = null;
-    newMessageHandler = null;
-    newChathandler = null;
-    socket = null;
-    static getServerInstance(userToken = null) {
-        if (!WebSocketServer.serverInstance) {
-            WebSocketServer.serverInstance = new WebSocketServer();
-        }
-        if (WebSocketServer.serverInstance.socket === null) {
-            if (userToken === null) {
-                return null;
-            }
-            const url = `${baseURLForWebsocket}/${userToken}/`;
-            // url = `ws://127.0.0.1:8000/ws/chat/${chatID}/`;
-            console.log(`Connection try. URL: ${url}`);
-            WebSocketServer.serverInstance.socket = new WebSocket(url);
-            const socket = WebSocketServer.serverInstance.socket;
-            socket.onopen = () => {
-                console.log(
-                    `WebSocket connection successfully made. URL: ${url}`
-                );
-            };
-            socket.onclose = () => {
-                console.log("Connection closed");
-            };
+			socket.onerror = (event) => {
+				console.log(event.message);
+			};
 
-            socket.onerror = (event) => {
-                console.log(event.message);
-            };
+			socket.onmessage = (event) => {
+				WebSocketServer.serverInstance.socketMessageHandler(event.data);
+			};
+		}
+		return WebSocketServer.serverInstance;
+	}
+	setMessageHandlers(
+		chatID,
+		previousMessagesHandler,
+		newMessageHandler,
+		newChatHandler,
+		newFriendhandler,
+		newFriendRequestHandler,
+		friendRequestResolvedHandler,
+		friendRequestAcceptedHandler,
+		friendRequestSentHandler
+	) {
+		try {
+			this.previousMessagesHandler = previousMessagesHandler;
+			this.newMessageHandler = newMessageHandler;
+			this.newChatHandler = newChatHandler;
+			this.newFriendhandler = newFriendhandler;
+			this.newFriendRequestHandler = newFriendRequestHandler;
+			this.friendRequestResolvedHandler = friendRequestResolvedHandler;
+			this.friendRequestAcceptedHandler = friendRequestAcceptedHandler;
+			this.friendRequestSentHandler = friendRequestSentHandler;
+		} catch (error) {
+			console.log(error.message);
+		}
+	}
 
-            socket.onmessage = (event) => {
-                WebSocketServer.serverInstance.socketMessageHandler(event.data);
-            };
-        }
-        return WebSocketServer.serverInstance;
-    }
-    setMessageHandlers(
-        chatID,
-        previousMessagesHandler,
-        newMessageHandler,
-        newChatHandler
-    ) {
-        try {
-            this.previousMessagesHandler = previousMessagesHandler;
-            this.newMessageHandler = newMessageHandler;
-            this.newChatHandler = newChatHandler;
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
+	isConnectionMade = () => {
+		const webSocket = this.socket;
+		if (webSocket && webSocket.readyState) {
+			return true;
+		} else {
+			return false;
+		}
+	};
 
-    isConnectionMade = () => {
-        const webSocket = this.socket;
-        if (webSocket && webSocket.readyState) {
-            return true;
-        } else {
-            return false;
-        }
-    };
+	deleteSocket = () => {
+		try {
+			const webSocket = this.socket;
+			delete this.socket;
+			webSocket.close();
+		} catch (error) {
+			console.log(error.message);
+		}
+	};
 
-    deleteSocket = () => {
-        try {
-            const webSocket = this.socket;
-            delete this.socket;
-            // this.sockets.splice(this.sockets.indexOf(webSocket), 1);
-            webSocket.close();
-        } catch (error) {
-            console.log(error.message);
-        }
-    };
+	sendMessage = (chatID, data) => {
+		try {
+			const webSocket = this.socket;
 
-    sendMessage = (chatID, data) => {
-        try {
-            const webSocket = this.socket;
+			webSocket.send(JSON.stringify({...data, chatID: chatID}));
+			return true;
+		} catch (error) {
+			console.log(error.message);
+			return false;
+		}
+	};
 
-            webSocket.send(JSON.stringify({ ...data, chatID: chatID }));
-            return true;
-        } catch (error) {
-            console.log(error.message);
-            return false;
-        }
-    };
-
-    socketMessageHandler = (data) => {
-        const parsedData = JSON.parse(data);
-        const messageType = parsedData.message_type;
-        switch (messageType) {
-            case "previous_messages":
-                const messages = parsedData.messages.map((jsonString) =>
-                    JSON.parse(jsonString)
-                );
-
-                this.previousMessagesHandler(parsedData.chatID, messages);
-                break;
-            case "new_message":
-                // const message = JSON.parse(parsedData.message);
-                const message = parsedData.message;
-                this.newMessageHandler(parsedData.chatID, message);
-                break;
-            case "new_chat":
-                const chatID = parsedData.chatID;
-                const participants = parsedData.participants;
-                this.newChatHandler(chatID, participants);
-        }
-    };
+	socketMessageHandler = (data) => {
+		const parsedData = JSON.parse(data);
+		const messageType = parsedData.message_type;
+		const friend = parsedData.friend;
+		switch (messageType) {
+			case "previous_messages":
+				const messages = parsedData.messages.map((jsonString) =>
+					JSON.parse(jsonString)
+				);
+				this.previousMessagesHandler(parsedData.chatID, messages);
+				break;
+			case "new_message":
+				const message = parsedData.message;
+				this.newMessageHandler(parsedData.chatID, message);
+				break;
+			case "new_chat":
+				const chatID = parsedData.chatID;
+				const participants = parsedData.participants;
+				this.newChatHandler(chatID, participants);
+				break;
+			case "friend_request_received":
+				this.newFriendRequestHandler(parsedData["friend_request"]);
+				break;
+			//Well, newFriendHandler actually doesn't have to be called separately...
+			case "friend_request_accepted":
+				console.log(friend)
+				this.newFriendhandler(friend);
+				this.friendRequestAcceptedHandler(parsedData["friend_request"]);
+				break;
+			//here either
+			case "friend_request_sent_confirmed":
+				this.friendRequestSentHandler(parsedData["friend_request"])
+				break;
+			case "friend_request_resolved":
+				this.newFriendhandler(friend);
+				this.friendRequestResolvedHandler(parsedData["friend_request"]);
+				break;
+		}
+	};
 }

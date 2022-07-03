@@ -93,8 +93,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return str(user.account.userID)
 
     @database_sync_to_async
-    def store_channel_name(self):
+    def get_group_name(self):
+        token = self.scope["url_route"]["kwargs"]["user_token"]
+        user = (Token.objects.get)(key=token).user
+        account = get_object_or_404(Account,user=user)
+        return account.group_name
+        
 
+    @database_sync_to_async
+    def store_channel_name(self):
         self.account.channel_name = self.channel_name
         self.account.save()
 
@@ -105,7 +112,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         chats = await self.get_chats_with_token()
         self.room_group_names = []
         await self.store_channel_name()
-
+        await self.channel_layer.group_add(
+                await self.get_group_name(),
+                self.channel_name,
+        )
+        user_group_name = await self.get_group_name()
+        self.room_group_names.append(user_group_name)
         for chat in chats:
             self.room_group_names.append(chat.chatID)
 
@@ -177,7 +189,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 chats = await sync_to_async(chat_objs.filter)(pk__in=message["chatID"])
             else:
                 chats = await sync_to_async(chat_objs.filter)(pk=message["chatID"])
-
             messageObj = await sync_to_async(Message.objects.create)(
                 author=account, content=message["content"]
             )
@@ -189,6 +200,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 chatID=message["chatID"],
                 message=(messageSerialized),
             )
+
+    async def notify(self, event):
+        await self.send(text_data=json.dumps(event["message"]))
 
     async def notify_new_chat(self, event):
         await self.send(text_data=json.dumps(event["message"]))
@@ -208,7 +222,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from room group (not from the frontend socket)
     async def chat_message_arrive(self, event):
         await self.send(text_data=json.dumps(event["message"]))
-
 
 m2m_changed.connect(
     receiver=ChatConsumer.create_new_group, sender=Chat.participants.through

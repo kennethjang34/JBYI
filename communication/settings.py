@@ -5,12 +5,7 @@ from secret_key import SECRET_KEY
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -18,10 +13,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:1234",
 ]
 CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_WHITELIST = ("https://localhost:1234",)
-# CORS_ORIGIN_WHITELIST = ("https://localhost:8000",)
-
-# Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -31,7 +22,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "channels",
-    # "channels_presence",
     "chat",
     "communication",
     "rest_framework",
@@ -88,8 +78,6 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -141,15 +129,12 @@ REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S.%fZ",
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+        "rest_framework.authentication.TokenAuthentication"
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
-        # "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
 
-JWT_AUTH = {
-    "JWT_AUTH_COOKIE": "JWT",  # the cookie will also be sent on WebSocket connections
-}

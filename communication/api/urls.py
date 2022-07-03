@@ -5,11 +5,12 @@ from .views import *
 app_name = "communication"
 
 urlpatterns = [
-    re_path("friends", FriendsList.as_view()),
-    re_path("add-friend", FriendsUpdate.as_view()),
-    re_path("accounts", AccountList.as_view())
-    # re_path("create/$", ChatCreate.as_view()),
-    # re_path("<pk>$", ChatRetrieve.as_view()),
-    # re_path("<pk>/update/$", ChatUpdate.as_view()),
-    # re_path("<pk>/delete/$", ChatDelete.as_view()),
+    re_path(r"friends/(?P<userID>[\w]+)/$", FriendsListView.as_view()),
+    re_path(r"friends", FriendsListView.as_view()),
+    re_path(r"friend-requests/(?P<pk>\d+)/?$", FriendRequestRetrieveUpdateView.as_view()),
+    re_path(r"friend-requests/$", FriendRequestListCreateView.as_view()),
+    #accounts/ will lead to an error
+    re_path(r"accounts", AccountListView.as_view()),
+    re_path(r"accounts/(?P<pk>[-\w]+)/$", AccountRetrieveUpdateView.as_view())
 ]
+

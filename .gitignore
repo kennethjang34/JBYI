@@ -15,3 +15,11 @@ Pipfile.lock
 vscode-neovim/
 secret_key.py
 chat/migrations/__pycache__/*
+<<<<<<< HEAD
+=======
+.*
+!.gitignore
+dist
+**/dist/**
+**/static/*/**
+>>>>>>> UI-Improvement

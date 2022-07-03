@@ -21,7 +21,6 @@ export const sendFriendRequestAction = (requester, receiver) => {
 				}
 			)
 			.then((response) => {
-				//console.log(response.data);
 			});
 	};
 };
@@ -76,7 +75,6 @@ export const loadFriendsAction = (username) => {
 			})
 			.then((response) => {
 				dispatch(loadFriends(response.data));
-				// axios.defaults.baseURL = "http://127.0.0.1:8000/api-auth/";
 			});
 	};
 };

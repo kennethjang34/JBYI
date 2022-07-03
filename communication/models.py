@@ -2,19 +2,14 @@ from aioredis import AuthError
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.dispatch import receiver
-<<<<<<< HEAD
-from django.db.models.signals import post_save
-from django.db.models import constraints
-=======
 from django.db.models.signals import post_save, pre_save
 from django.db.models import constraints
 from django.core.exceptions import ValidationError
 from asgiref.sync import async_to_sync
 import channels.layers
->>>>>>> UI-Improvement
 User = get_user_model()
 
-####
+
 def pkgen():
     from base64 import b32encode
     from hashlib import sha1
@@ -29,30 +24,6 @@ def pkgen():
 
 class Account(models.Model):
     userID = models.CharField(max_length=15, primary_key=True, default=pkgen)
-<<<<<<< HEAD
-    user = models.OneToOneField(User, related_name="account", on_delete=models.CASCADE)
-    following = models.ManyToManyField(
-            "Account",
-            related_name="followers",
-            )
-    timestamp = models.DateTimeField(auto_now_add=True)
-    channel_name = models.CharField(max_length=100, default="")
-
-    def __str__(self): return self.userID # called whenever there is a new user 
-    @receiver(post_save, sender=get_user_model()) 
-    def create_account(sender, instance, created, **kwargs): 
-        if created: account = Account.objects.create(userID=instance.username, user=instance)
-            # no friends !
-
-
-
-class FriendRequest(models.Model):
-    requester = models.ForeignKey(Account, related_name="friend_requests_sent", on_delete=models.CASCADE)
-    receiver = models.ForeignKey(Account, related_name="friend_requests_received", on_delete=models.CASCADE)
-    accepted = models.BooleanField(blank=True, null=True, default=None)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-=======
     user = models.OneToOneField(User,
                                 related_name="account",
                                 on_delete=models.CASCADE,
@@ -64,30 +35,9 @@ class FriendRequest(models.Model):
     channel_name = models.CharField(max_length=100, default="")
 
     # called whenever there is a new user
->>>>>>> UI-Improvement
     def __str__(self):
-        return "Requester: " + self.requester.__str__() + ", Receiver: " + self.receiver.__str__()
+        return self.userID
 
-    
-    class Meta:
-        constraints = [
-                constraints.UniqueConstraint(
-                    fields=['requester', 'receiver'], name="unique_friendship_reverse"
-                    ),
-                models.CheckConstraint(
-                    name="prevent_self_follow",
-                    check=~models.Q(requester=models.F("receiver")),
-                    )
-                ]
-
-
-        #  db_table = 'FriendRequest'
-     #   constraints = [
-    #        models.UniqueConstraint(fields=['app_uuid', 'version_code'], name='unique appversion')
-   #     ]
-
-<<<<<<< HEAD
-=======
     @receiver(post_save, sender=get_user_model())
     def create_account(sender, instance, created, **kwargs):
         if created:
@@ -224,4 +174,3 @@ class FriendRequest(models.Model):
 
 #pre_save.connect(FriendRequest.pre_save, sender=FriendRequest)
 post_save.connect(FriendRequest.post_save, sender=FriendRequest)
->>>>>>> UI-Improvement

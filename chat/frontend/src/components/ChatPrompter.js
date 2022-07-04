@@ -1,7 +1,8 @@
-import React from "react";
+
+import React, {useRef, useEffect, useState} from "react";
 import "antd/dist/antd.css";
 // import "./index.css";
-import {Select, Button} from "antd";
+import {Select, Button, Divider} from "antd";
 const {Option} = Select;
 
 let toInvite = [];
@@ -34,21 +35,30 @@ const renderFriends = (friends) => {
 };
 
 const ChatPrompter = (props) => {
+	const [open, setOpen] = useState(true)
+	const selectRef = useRef()
+	dropdownRender = (menu) => {
+		return (!open ? null : <>{menu}
+			<Button onClick={() => {toInvite && props.createHandler(toInvite); setOpen(false); selectRef.current.blur()}}>Create Chat</Button></>)
+	}
+	//	useEffect(() => {if (props.visible) {setOpen(true)} })
+	//	useEffect(() => {console.log(selectRef.current); selectRef.current.blur()}, [open])
 	return (
 		<div>
 			<Select
+				ref={selectRef}
 				mode="multiple"
+				onFocus={() => {setOpen(true)}}
+				open={open}
 				style={{
 					width: "100%",
 				}}
 				placeholder="select people to invite"
-				// defaultValue={["china"]}
 				onSelect={addFriend}
 				onDeselect={removeFriend}
-			// optionlabelprop="label"
-			>
+				dropdownRender={(menu) => {return !open ? null : (<>{menu}<Button onClick={() => {toInvite && props.createHandler(toInvite); setOpen(false); selectRef.current.blur()}}>Create Chat </Button></>)}}>
 				{props.friends && renderFriends(props.friends)}
-			</Select>
+			</Select >
 			<Button
 				onClick={() => {
 					toInvite && props.createHandler(toInvite);
@@ -56,7 +66,7 @@ const ChatPrompter = (props) => {
 			>
 				Create Chat
 			</Button>
-		</div>
+		</div >
 	);
 };
 

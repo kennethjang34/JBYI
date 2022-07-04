@@ -205,11 +205,11 @@ class SidePanel extends React.Component {
 							>
 								New Chat
 							</button>
-							{/* <div> */}
 							<Popover
 								content={
 									<div>
 										<ChatPrompter
+											visible={this.state.chatPrompterOpen}
 											createHandler={(friends) => {
 												const participants = [
 													...friends,

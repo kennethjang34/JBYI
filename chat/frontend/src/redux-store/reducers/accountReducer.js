@@ -1,14 +1,15 @@
 import * as actionTypes from "../actions/actionTypes";
 const initialState = {
 	friends: localStorage.friends ? JSON.parse(localStorage.friends) : [],
+	friendRequests: localStorage.friendRequests ? JSON.parse(localStorage.friendRequests) : []
 };
 const friendAdded = (state, action) => {
-	const friends = [...state.friends, action.friend];
+	const friends = state.friends ? [...state.friends, action.friend] : [action.friend];
 	return {...state, friends: friends};
 };
 
 const friendRequestReceived = (state, action) => {
-	var existing = [...state.friendRequests];
+	var existing = state.friendRequests ? [...state.friendRequests] : [];
 	var new_list = [];
 	if (existing) {
 		new_list = existing.filter((request) => {return request.id !== action.friendRequest.id})

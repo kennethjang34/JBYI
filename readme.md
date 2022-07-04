@@ -1,8 +1,8 @@
-# Real-Time Chat Application
+# JBYI, A Real-Time Chat Application
 
 ## An application that allows user to send/receive messages instantaneously in group chat environment
 
-_This project was started as a part of sub-parts of a project of building a community application for college students to share and discuss school specific material such as timetables or opinions about courses._
+Demo Video: https://youtu.be/kj7NnVaKVoA
 
 ## Main features of the application
 

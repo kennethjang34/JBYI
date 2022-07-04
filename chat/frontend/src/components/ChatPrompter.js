@@ -19,28 +19,32 @@ const removeFriend = (value) => {
 	}
 };
 const renderFriends = (friends) => {
-	const friendsRendered = friends.map((friend) => {
-		return (
-			<Option value={friend.userID} label={friend.userID} key={friend.userID}>
-				<div className="demo-option-label-item">
-					<span role="img" aria-label={friend.userID}>
-						😀
-					</span>
-					{" " + friend.userID}
-				</div>
-			</Option>
-		);
-	});
-	return friendsRendered;
+	if (friends) {
+		const friendsRendered = friends.map((friend) => {
+			return (
+				<Option value={friend.userID} label={friend.userID} key={friend.userID}>
+					<div className="demo-option-label-item">
+						<span role="img" aria-label={friend.userID}>
+							😀
+						</span>
+						{" " + friend.userID}
+					</div>
+				</Option>
+			);
+		});
+		return friendsRendered;
+	} else {
+		return null;
+	}
 };
 
 const ChatPrompter = (props) => {
-	const [open, setOpen] = useState(true)
+	const [open, setOpen] = useState(false)
 	const selectRef = useRef()
-	dropdownRender = (menu) => {
-		return (!open ? null : <>{menu}
-			<Button onClick={() => {toInvite && props.createHandler(toInvite); setOpen(false); selectRef.current.blur()}}>Create Chat</Button></>)
-	}
+	//	dropdownRender = (menu) => {
+	//		return (!open ? null : <>{menu}
+	//			<Button onClick={() => {toInvite && props.createHandler(toInvite); setOpen(false); selectRef.current.blur()}}>Create Chat</Button></>)
+	//	}
 	//	useEffect(() => {if (props.visible) {setOpen(true)} })
 	//	useEffect(() => {console.log(selectRef.current); selectRef.current.blur()}, [open])
 	return (
@@ -53,10 +57,11 @@ const ChatPrompter = (props) => {
 				style={{
 					width: "100%",
 				}}
+				onBlur={() => {setOpen(false)}}
 				placeholder="select people to invite"
-				onSelect={addFriend}
-				onDeselect={removeFriend}
-				dropdownRender={(menu) => {return !open ? null : (<>{menu}<Button onClick={() => {toInvite && props.createHandler(toInvite); setOpen(false); selectRef.current.blur()}}>Create Chat </Button></>)}}>
+				onSearch={() => {setOpen(true)}}
+				onSelect={(value) => {addFriend(value); setOpen(false)}}
+				onDeselect={removeFriend}>
 				{props.friends && renderFriends(props.friends)}
 			</Select >
 			<Button

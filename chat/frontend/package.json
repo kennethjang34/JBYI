@@ -1,47 +1,47 @@
 {
-    "name": "chat-frontend",
-    "version": "1.0.0",
-    "description": "",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "parcel --no-cache src/index.html",
-        "build": "parcel build src/index.html"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "antd": "*",
-        "axios": "*",
-        "chat": "^1.0.8",
-        "lmdb": "^2.4.5",
-        "react": "*",
-        "react-dom": "*",
-        "react-modal": "^3.15.1",
-        "react-redux": "*",
-        "react-router-dom": "^6.3.0",
-        "redux": "*",
-        "redux-devtools-extension": "*",
-        "redux-thunk": "*",
-        "socket.io-client": "*"
-    },
-    "devDependencies": {
-        "@babel/core": "*",
-        "@babel/plugin-proposal-class-properties": "*",
-        "@babel/preset-react": "*",
-        "babel-core": "^6.26.3",
-        "babel-preset-env": "*",
-        "babel-preset-es2015": "*",
-        "babel-preset-es2017": "*",
-        "babel-preset-react": "*",
-        "buffer": "*",
-        "parcel": "^2.6.0",
-        "process": "*",
-        "react-error-overlay": "^6.0.9"
-    },
-    "alias": {
-        "process": {
-            "global": "{}"
-        }
+  "name": "chat-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel --no-cache src/index.html",
+    "build": "parcel build src/index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "antd": "*",
+    "axios": "*",
+    "chat": "^1.0.8",
+    "lmdb": "^2.4.5",
+    "react": "*",
+    "react-dom": "*",
+    "react-modal": "^3.15.1",
+    "react-redux": "*",
+    "react-router-dom": "^6.3.0",
+    "redux": "*",
+    "redux-devtools-extension": "*",
+    "redux-thunk": "*",
+    "socket.io-client": "*"
+  },
+  "devDependencies": {
+    "@babel/core": "*",
+    "@babel/plugin-proposal-class-properties": "*",
+    "@babel/preset-react": "*",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "*",
+    "babel-preset-es2015": "*",
+    "babel-preset-es2017": "*",
+    "babel-preset-react": "*",
+    "buffer": "*",
+    "parcel": "^2.6.0",
+    "process": "*",
+    "react-error-overlay": "^6.0.9"
+  },
+  "alias": {
+    "process": {
+      "global": "{}"
     }
+  }
 }

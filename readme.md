@@ -18,6 +18,3 @@ Client-side rendering was chosen for separation of concern and performance of th
 For the overall UI, Boostrap framework's snippet was imported from the following address: https://www.bootdey.com/snippets/view/messages-like-material-design#js.
 The snippet went through changes to suit this project.
 
-CIP.
-Current state of the development:
-working on a feature for creating a new chat room with alert window of the browser
